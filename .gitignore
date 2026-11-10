@@ -1,0 +1,16 @@
+.DS_Store
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Local research state. These may contain proprietary firmware or analysis.
+.tater-re/
+tater-re-ghidra-projects/
+private/
+firmware/
+blobs/
+captures/
+*.gpr
+*.rep/
+
