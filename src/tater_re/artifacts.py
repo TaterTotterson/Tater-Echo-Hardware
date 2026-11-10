@@ -34,6 +34,8 @@ def classify(path: Path) -> dict[str, Any]:
             details["parse_error"] = str(error)
     elif head.startswith(b"ANDROID!"):
         kind = "android-boot-image"
+    elif len(head) >= 520 and head[512:520] == b"EFI PART":
+        kind = "gpt"
     elif head[:4] == b"\x3a\xff\x26\xed":
         kind = "android-sparse-image"
     elif head[:4] == b"\xd0\x0d\xfe\xed":

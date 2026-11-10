@@ -15,6 +15,23 @@ from .artifacts import classify, sha256_file
 
 SCHEMA_VERSION = 1
 SKIP_DIRECTORIES = {".git", ".tater-re", "__pycache__"}
+SENSITIVE_NAMES = {
+    ".env",
+    "authorized_keys",
+    "credentials",
+    "credentials.json",
+    "id_dsa",
+    "id_ecdsa",
+    "id_ed25519",
+    "id_rsa",
+    "secrets.json",
+}
+SENSITIVE_SUFFIXES = {".jks", ".key", ".keystore", ".p12", ".pem", ".pkcs12"}
+
+
+def is_sensitive_name(name: str) -> bool:
+    lowered = name.casefold()
+    return lowered in SENSITIVE_NAMES or Path(lowered).suffix in SENSITIVE_SUFFIXES
 
 
 def utc_now() -> str:
@@ -81,7 +98,8 @@ class Workspace:
 
     def _files(self, source: Path) -> Iterable[tuple[Path, str]]:
         if source.is_file():
-            yield source, source.name
+            if not is_sensitive_name(source.name):
+                yield source, source.name
             return
         if not source.is_dir():
             raise WorkspaceError(f"input does not exist or is not a regular file/directory: {source}")
@@ -89,6 +107,8 @@ class Workspace:
             names[:] = sorted(name for name in names if name not in SKIP_DIRECTORIES)
             base = Path(directory)
             for name in sorted(files):
+                if is_sensitive_name(name):
+                    continue
                 path = base / name
                 if path.is_symlink() or not path.is_file():
                     continue
@@ -125,6 +145,12 @@ class Workspace:
                 }
                 manifest["artifacts"][digest] = artifact
                 added += 1
+            elif artifact.get("kind") == "data":
+                metadata = classify(path)
+                kind = metadata.pop("kind")
+                if kind != "data":
+                    artifact["kind"] = kind
+                    artifact["metadata"] = metadata
             location = {
                 "source_id": source_id,
                 "relative_path": relative,

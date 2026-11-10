@@ -70,6 +70,7 @@ class ELFTests(unittest.TestCase):
     def test_classifies_common_firmware_magic(self) -> None:
         cases = {
             "boot.img": (b"ANDROID!" + bytes(2048), "android-boot-image"),
+            "gpt.img": (bytes(512) + b"EFI PART" + bytes(1536), "gpt"),
             "sparse.img": (b"\x3a\xff\x26\xed" + bytes(2048), "android-sparse-image"),
             "board.dtb": (b"\xd0\x0d\xfe\xed" + bytes(2048), "device-tree-blob"),
         }

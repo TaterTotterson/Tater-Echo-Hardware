@@ -4,6 +4,8 @@
 import ghidra.app.script.GhidraScript;
 import ghidra.program.model.listing.Data;
 import ghidra.program.model.listing.Function;
+import ghidra.program.model.symbol.Reference;
+import ghidra.program.model.symbol.ReferenceIterator;
 import ghidra.program.model.symbol.Symbol;
 import ghidra.program.util.DefinedDataIterator;
 
@@ -47,7 +49,7 @@ public class ExportProgram extends GhidraScript {
         }
         try (PrintWriter output = new PrintWriter(new OutputStreamWriter(
                 new FileOutputStream(args[0]), StandardCharsets.UTF_8))) {
-            output.println("{\"record\":\"program\",\"name\":" + quoted(currentProgram.getName())
+            output.println("{\"record\":\"program\",\"schema_version\":2,\"name\":" + quoted(currentProgram.getName())
                     + ",\"executable_sha256\":" + quoted(currentProgram.getExecutableSHA256())
                     + ",\"language\":" + quoted(currentProgram.getLanguageID().toString())
                     + ",\"compiler\":" + quoted(currentProgram.getCompilerSpec().getCompilerSpecID().toString())
@@ -71,6 +73,7 @@ public class ExportProgram extends GhidraScript {
                         + ",\"name\":" + quoted(function.getName())
                         + ",\"namespace\":" + quoted(symbol.getParentNamespace().getName(true))
                         + ",\"signature\":" + quoted(function.getSignature().toString())
+                        + ",\"size\":" + function.getBody().getNumAddresses()
                         + ",\"external\":" + function.isExternal()
                         + ",\"thunk\":" + function.isThunk()
                         + ",\"calls\":" + calls + "}");
@@ -82,9 +85,26 @@ public class ExportProgram extends GhidraScript {
                 Object value = data.getValue();
                 String text = value == null ? "" : value.toString();
                 if (text.length() > 4096) text = text.substring(0, 4096);
+                StringBuilder references = new StringBuilder("[");
+                boolean firstReference = true;
+                ReferenceIterator iterator = currentProgram.getReferenceManager()
+                        .getReferencesTo(data.getAddress());
+                while (iterator.hasNext()) {
+                    Reference reference = iterator.next();
+                    Function owner = currentProgram.getFunctionManager()
+                            .getFunctionContaining(reference.getFromAddress());
+                    if (!firstReference) references.append(',');
+                    references.append("{\"from\":")
+                            .append(quoted(reference.getFromAddress().toString()))
+                            .append(",\"function\":")
+                            .append(quoted(owner == null ? "" : owner.getName(true))).append('}');
+                    firstReference = false;
+                }
+                references.append(']');
                 output.println("{\"record\":\"string\",\"address\":"
                         + quoted(data.getAddress().toString())
-                        + ",\"value\":" + quoted(text) + "}");
+                        + ",\"value\":" + quoted(text)
+                        + ",\"references\":" + references + "}");
             }
         }
     }

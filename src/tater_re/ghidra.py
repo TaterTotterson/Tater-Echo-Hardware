@@ -203,6 +203,39 @@ def decompile(
     return output_path
 
 
+def export_project(
+    workspace: Workspace, artifact_prefix: str, ghidra_home: str | None = None
+) -> Path:
+    """Refresh the JSONL export from an existing analyzed Ghidra project."""
+
+    executable = find_analyze_headless(ghidra_home)
+    if not executable:
+        raise WorkspaceError("Ghidra analyzeHeadless was not found; pass --ghidra-home")
+    digest, artifact = workspace.resolve(artifact_prefix)
+    ghidra = artifact.get("analysis", {}).get("ghidra")
+    if not ghidra:
+        raise WorkspaceError("artifact has not been analyzed by Ghidra yet")
+    output_root = workspace.root / "analysis" / "ghidra" / digest
+    export_path = output_root / "program.jsonl"
+    log_path = output_root / "export.log"
+    command = [
+        str(executable),
+        str(project_directory(workspace)),
+        ghidra["project_name"],
+        "-process",
+        ghidra["program_name"],
+        "-noanalysis",
+        "-scriptPath",
+        str(script_directory()),
+        "-postScript",
+        "ExportProgram.java",
+        str(export_path),
+    ]
+    _run(command, log_path)
+    _validate_export(export_path, log_path)
+    return export_path
+
+
 def status(explicit: str | None = None) -> dict[str, Any]:
     executable = find_analyze_headless(explicit)
     java_home = find_java_home()

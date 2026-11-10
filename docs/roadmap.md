@@ -2,13 +2,19 @@
 
 ## Milestone 1 — local firmware workbench
 
-- Inventory extracted firmware and individual artifacts by SHA-256.
-- Parse ELF identity and dependency metadata.
-- Export Ghidra functions, strings, calls, and targeted decompilation.
-- Search analysis from a deterministic command line.
-- Preserve a complete audit trail without committing private inputs.
+Status: complete for the first MT8163 offline baseline.
+
+- [x] Inventory extracted firmware and individual artifacts by SHA-256.
+- [x] Parse ELF identity and dependency metadata.
+- [x] Inspect Android boot, GPT, ext4, ramdisk, kernel, and appended DTB data.
+- [x] Export Ghidra functions, strings, cross-references, calls, and targeted
+  decompilation.
+- [x] Produce repeatable capability and dependency reports.
+- [x] Preserve a complete audit trail without committing private inputs.
 
 ## Milestone 2 — read-only device evidence
+
+Status: ready for a connected test device.
 
 - Snapshot platform, driver, device-node, ALSA, display, media, and firmware
   metadata through ADB or SSH.

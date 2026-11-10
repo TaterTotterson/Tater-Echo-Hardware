@@ -6,6 +6,11 @@ Analyze firmware and devices owned by the operator. Keep complete firmware,
 partition dumps, vendor libraries, calibration material, device identifiers,
 keys, and Ghidra databases outside Git in the ignored research workspace.
 
+The workbench skips common private-key, keystore, credential, and secret file
+names during directory ingestion and ext4 extraction. This is defense in depth,
+not a substitute for reviewing source material and `git status` before every
+commit.
+
 Committed evidence may contain cryptographic hashes, public symbol names,
 addresses tied to a named binary hash, independently written interface
 descriptions, and reproducible test results. It must not contain reconstructed

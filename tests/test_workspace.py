@@ -17,6 +17,7 @@ class WorkspaceTests(unittest.TestCase):
             (inputs / "libcodec.so").write_bytes(content)
             (inputs / "vendor" / "libcodec-copy.so").write_bytes(content)
             (inputs / "readme.txt").write_text("sample", encoding="utf-8")
+            (inputs / "device.key").write_text("secret", encoding="utf-8")
 
             workspace = Workspace(root / "work")
             result = workspace.ingest(inputs)
@@ -29,6 +30,7 @@ class WorkspaceTests(unittest.TestCase):
             self.assertEqual(len(elf_records[0][1]["locations"]), 2)
             self.assertEqual(len(workspace.search("libcodec")), 1)
             self.assertEqual(len(workspace.search("arm")), 1)
+            self.assertEqual(len(workspace.search("device.key")), 0)
 
     def test_resolve_rejects_missing_artifact(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -36,6 +38,31 @@ class WorkspaceTests(unittest.TestCase):
             workspace.initialize()
             with self.assertRaises(WorkspaceError):
                 workspace.resolve("deadbeef")
+
+    def test_skips_direct_sensitive_file(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            key = root / "device.key"
+            key.write_text("secret", encoding="utf-8")
+            workspace = Workspace(root / "work")
+            result = workspace.ingest(key)
+            self.assertEqual(result["scanned"], 0)
+            self.assertEqual(workspace.records(), [])
+
+    def test_reingest_upgrades_generic_classification(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            image = root / "gpt.img"
+            image.write_bytes(bytes(512) + b"EFI PART" + bytes(1536))
+            workspace = Workspace(root / "work")
+            workspace.ingest(image)
+            manifest = workspace.load()
+            digest = next(iter(manifest["artifacts"]))
+            manifest["artifacts"][digest]["kind"] = "data"
+            workspace.save(manifest)
+
+            workspace.ingest(image)
+            self.assertEqual(workspace.resolve(digest)[1]["kind"], "gpt")
 
 
 if __name__ == "__main__":
