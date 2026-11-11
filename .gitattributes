@@ -1,0 +1,2 @@
+# Patch context lines intentionally contain a format marker before source tabs.
+kernel-patches/**/*.patch whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab

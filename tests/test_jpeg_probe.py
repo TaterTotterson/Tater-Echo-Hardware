@@ -25,6 +25,7 @@ class JpegProbeTests(unittest.TestCase):
             )
         description = json.loads(result.stdout)
         self.assertEqual(description["abi"], "mt8163-arm32")
+        self.assertEqual(description["control_open"], "read-only")
         self.assertEqual(description["output_size"], 8)
         self.assertEqual(description["config_size"], 208)
         self.assertEqual(description["wait"], "0xc0087805")

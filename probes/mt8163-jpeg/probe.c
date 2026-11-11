@@ -87,6 +87,49 @@ static bool file_contains(const char *path, const char *needle) {
     return false;
 }
 
+static bool stream_contains(const char *path, const char *needle) {
+    unsigned char buffer[4096];
+    size_t carry = 0;
+    size_t needle_size = strlen(needle);
+    int descriptor;
+
+    if (needle_size == 0 || needle_size >= sizeof(buffer)) {
+        return false;
+    }
+    descriptor = open(path, O_RDONLY | O_CLOEXEC);
+    if (descriptor < 0) {
+        return false;
+    }
+    for (;;) {
+        ssize_t count = read(descriptor, buffer + carry, sizeof(buffer) - carry);
+        size_t used;
+        if (count < 0 && errno == EINTR) {
+            continue;
+        }
+        if (count <= 0) {
+            break;
+        }
+        used = carry + (size_t)count;
+        for (size_t offset = 0; offset + needle_size <= used; ++offset) {
+            if (memcmp(buffer + offset, needle, needle_size) == 0) {
+                close(descriptor);
+                return true;
+            }
+        }
+        carry = needle_size - 1;
+        if (carry > used) {
+            carry = used;
+        }
+        memmove(buffer, buffer + used - carry, carry);
+    }
+    close(descriptor);
+    return false;
+}
+
+static bool kernel_decoder_present(void) {
+    return stream_contains("/proc/kallsyms", "jpeg_drv_dec_start");
+}
+
 static int verify_checkers(void) {
     if (!file_contains("/proc/device-tree/compatible", "mediatek,mt8163")) {
         fprintf(stderr, "refusing: device is not compatible with mediatek,mt8163\n");
@@ -113,13 +156,16 @@ static int verify_node(void) {
 }
 
 static int inspect_node(void) {
+    bool decoder_present;
     if (verify_checkers() != 0 || verify_node() != 0) {
         return 2;
     }
+    decoder_present = kernel_decoder_present();
     printf("{\"target\":\"checkers\",\"compatible\":\"mediatek,mt8163\","
            "\"node\":\"%s\",\"node_opened\":false,"
+           "\"kernel_decoder_present\":%s,"
            "\"hardware_ioctl_issued\":false}\n",
-           JPEG_NODE);
+           JPEG_NODE, decoder_present ? "true" : "false");
     return 0;
 }
 
@@ -138,6 +184,10 @@ static int execute_init_cycle(void) {
         fprintf(stderr, "refusing: active probe requires root\n");
         return 2;
     }
+    if (!kernel_decoder_present()) {
+        fprintf(stderr, "refusing: running kernel has no JPEG decoder symbols\n");
+        return 2;
+    }
 
     sigemptyset(&blocked);
     sigaddset(&blocked, SIGINT);
@@ -148,18 +198,19 @@ static int execute_init_cycle(void) {
         return 2;
     }
 
+    /* Match the exact live vendor library, which opens the proc node read-only. */
     descriptor = open(JPEG_NODE, O_RDONLY | O_CLOEXEC);
     if (descriptor < 0) {
         fprintf(stderr, "could not open %s: %s\n", JPEG_NODE, strerror(errno));
         goto cleanup;
     }
-    if (ioctl(descriptor, JPEG_INIT) != 0) {
+    if (ioctl(descriptor, JPEG_INIT, 0UL) != 0) {
         fprintf(stderr, "JPEG INIT failed: %s\n", strerror(errno));
         goto cleanup;
     }
     initialized = 1;
     deinit_attempted = 1;
-    if (ioctl(descriptor, JPEG_DEINIT) != 0) {
+    if (ioctl(descriptor, JPEG_DEINIT, 0UL) != 0) {
         fprintf(stderr, "JPEG DEINIT failed: %s\n", strerror(errno));
         goto cleanup;
     }
@@ -171,7 +222,7 @@ static int execute_init_cycle(void) {
 
 cleanup:
     if (initialized && !deinit_attempted) {
-        if (ioctl(descriptor, JPEG_DEINIT) != 0) {
+        if (ioctl(descriptor, JPEG_DEINIT, 0UL) != 0) {
             fprintf(stderr, "cleanup JPEG DEINIT failed: %s\n", strerror(errno));
         }
     }
@@ -226,6 +277,7 @@ int main(int argc, char **argv) {
 
     if (action == ACTION_DESCRIBE) {
         printf("{\"schema_version\":1,\"abi\":\"mt8163-arm32\","
+               "\"control_open\":\"read-only\","
                "\"output_size\":%zu,\"config_size\":208,"
                "\"resume_size\":16,\"init\":\"0x%08lx\","
                "\"config\":\"0x%08lx\",\"start\":\"0x%08lx\","

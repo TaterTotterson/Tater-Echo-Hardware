@@ -7,6 +7,11 @@
 - Add a clean-room MT8163 JPEG ABI probe whose safe default only describes the
   interface and whose active INIT/DEINIT mode requires target verification and
   explicit acknowledgement.
+- Record that Checkers' pinned kernel exposes the JPEG encoder but compiles out
+  the decoder, and make the active probe refuse that incomplete kernel before
+  opening its control node.
+- Add an exact-source-validated experimental kernel/resource patch and compile
+  its decoder object and Checkers DVT without producing a bootable image.
 
 ## 0.2.0 — 2026-11-10
 

@@ -60,6 +60,10 @@ requires an explicit hardware-ioctl acknowledgement and must not be run without
 a separate device review and operator approval. See
 [the probe README](probes/mt8163-jpeg/README.md).
 
+The connected v4.0.2 kernel was found to contain the JPEG encoder but not the
+decoder implementation or its complete device-tree resources. The probe now
+reports that distinction and refuses active mode on such a kernel.
+
 Ghidra is optional until static analysis is requested. `debugfs` from
 e2fsprogs is needed for ext4 images, and `dtc` is needed to render appended
 device trees as source. ADB is optional until a physical device snapshot is

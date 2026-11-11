@@ -1,0 +1,59 @@
+From: Tater Hardware Research <research@invalid>
+Subject: [PATCH] arm64: mt8163: enable the existing JPEG decoder path
+
+The MT8163 tree builds the common JPEG driver but omits JPEG_DEC_DRIVER and
+describes only the encoder half of the hardware. Supply the resources already
+expected by the public driver before enabling its decoder implementation.
+
+This is an experimental Checkers bring-up patch, not a production change.
+---
+ arch/arm64/boot/dts/mediatek/mt8163.dtsi      | 10 ++++++----
+ drivers/misc/mediatek/jpeg/v2/Makefile        |  1 +
+ drivers/misc/mediatek/jpeg/v2/jpeg_drv.c      |  2 +-
+ 3 files changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8163.dtsi b/arch/arm64/boot/dts/mediatek/mt8163.dtsi
+--- a/arch/arm64/boot/dts/mediatek/mt8163.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8163.dtsi
+@@ -1645,10 +1645,12 @@
+ 		jpgenc@17003000 {
+ 			compatible = "mediatek,mt8163-jpgenc",
+ 				     "mediatek,venc_jpg";
+-			reg = <0 0x17003000 0 0x1000>;
+-			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_LOW>;
+-			clocks = <&vencsys CLK_VENC_CKE2>; /* jpeg enc */
+-			clock-names = "venc-jpgenc";
++			reg = <0 0x17003000 0 0x1000>,
++			      <0 0x17004000 0 0x1000>;
++			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_LOW>,
++				     <GIC_SPI 209 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&vencsys CLK_VENC_CKE2>, <&vencsys CLK_VENC_CKE3>;
++			clock-names = "venc-jpgenc", "MT_CG_VENC_JPGDEC";
+ 		};
+ 
+ 		btcvsd@18000000 {
+diff --git a/drivers/misc/mediatek/jpeg/v2/Makefile b/drivers/misc/mediatek/jpeg/v2/Makefile
+--- a/drivers/misc/mediatek/jpeg/v2/Makefile
++++ b/drivers/misc/mediatek/jpeg/v2/Makefile
+@@ -28,6 +28,7 @@ ifeq ($(CONFIG_MACH_MT6765),y)
+ endif
+ 
+ ifeq ($(CONFIG_MACH_MT8163),y)
++  ccflags-y += -DJPEG_DEC_DRIVER
+   ccflags-y += -DJPEG_PM_DOMAIN_ENABLE
+ endif
+ 
+diff --git a/drivers/misc/mediatek/jpeg/v2/jpeg_drv.c b/drivers/misc/mediatek/jpeg/v2/jpeg_drv.c
+--- a/drivers/misc/mediatek/jpeg/v2/jpeg_drv.c
++++ b/drivers/misc/mediatek/jpeg/v2/jpeg_drv.c
+@@ -1548,7 +1548,7 @@ static int jpeg_probe(struct platform_device *pdev)
+ 	#ifdef JPEG_DEC_DRIVER
+ 		enable_irq(gJpegqDev.decIrqId);
+ 		JPEG_MSG("request JPEG Decoder IRQ\n");
+-		if (request_irq(gJpegqDev.decIrqId, jpeg_drv_dec_isr, IRQF_TRIGGER_FALLING, "jpeg_dec_driver", NULL))
++		if (request_irq(gJpegqDev.decIrqId, jpeg_drv_dec_isr, IRQF_TRIGGER_LOW, "jpeg_dec_driver", NULL))
+ 			JPEG_ERR("JPEG DEC Driver request irq failed\n");
+ 	#endif
+ #endif
+-- 
+2.39.5

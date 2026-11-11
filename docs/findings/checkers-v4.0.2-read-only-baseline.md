@@ -98,6 +98,47 @@ This confirms the live userspace/kernel contract. It does not yet prove a
 successful independently initiated decode, correct buffer/cache handling, or
 safe timeout recovery.
 
+## Guarded INIT result: decoder omitted from this kernel
+
+With explicit operator approval, the target-gated probe was copied to `/tmp`,
+verified against its host SHA-256, and run against an otherwise idle JPEG node.
+An initial read-only-open INIT and one diagnostic read/write-open retry both
+returned `EINVAL`. Subsequent exact-library review confirmed that read-only was
+the vendor open mode. Neither request entered decoder state, and no buffer,
+display, persistent-storage, or register operation followed.
+
+The error is explained by three independent observations:
+
+- `/proc/kallsyms` contains the JPEG encoder implementation and common ioctl
+  entry points, but none of the public `jpeg_drv_dec_*` functions.
+- The exact live vendor decoder library opens `/proc/mtk_jpeg` read-only and
+  issues the same `0x7801` request, so neither the open mode nor request value
+  accounts for the rejection.
+- At the running kernel's exact public commit, `8d928c5176cc`, the JPEG
+  Makefile compiles the decoder object but does not define `JPEG_DEC_DRIVER`
+  for MT8163. The MT8163 device tree likewise supplies only the encoder's
+  register range, interrupt, and clock.
+
+The current Tater release build continues to reuse the pinned Checkers baseline
+boot image, so a rootfs/application update alone cannot add this decoder. A
+safe kernel experiment must add both the compile-time decoder path and the
+missing MT8163 decoder resources; merely defining the macro would leave invalid
+resource lookups and must not be flashed.
+
+An experimental patch is staged under
+[`kernel-patches/checkers`](../../kernel-patches/checkers/README.md). Its source
+provenance and patch context are verified, but its inferred decoder clock and
+interrupt remain deliberately classified as unproven until a compile-tested
+trial kernel reaches read-only resource discovery on the device.
+
+The experimental JPEG object and Checkers DVT now compile successfully from
+the exact source archive in an isolated native-ARM64 builder. The object
+contains the decoder symbols and the rendered DVT contains both resource sets.
+This was intentionally only a structural GCC 12 build: it generated kernel
+release `4.9.337`, so it is not compatible with the running vendor modules and
+must not be packaged or booted. A pinned GCC 8.3 full build with release
+`4.9.337-g8d928c5176cc` is the next kernel gate.
+
 ## Safety gate before active probing
 
 The next probe should be built and reviewed offline before it is copied to the
@@ -112,7 +153,8 @@ device. It must:
    thermal controls, mixer controls, or unrelated device registers; and
 7. validate the output buffer without presenting it to the display.
 
-Running that probe is a separate, explicit hardware action. It was not
-performed during this baseline. The reviewed implementation is staged in
-[`probes/mt8163-jpeg`](../../probes/mt8163-jpeg/README.md); its host-safe
-description mode is tested, while its active mode remains deliberately unrun.
+The bounded INIT checks were performed as described above and stopped at the
+kernel's fail-closed `EINVAL`. A future active retry requires a reviewed
+kernel with complete decoder resources and a fresh explicit approval. The
+probe in [`probes/mt8163-jpeg`](../../probes/mt8163-jpeg/README.md) now detects
+the missing decoder symbols and refuses before opening the node.

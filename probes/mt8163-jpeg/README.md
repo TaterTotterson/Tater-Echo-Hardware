@@ -5,7 +5,8 @@ contract. It does not configure buffers or decode an image yet.
 
 The default `--describe` mode is host-safe and prints the fixed ARM32 ABI
 values without opening a device. `--inspect` verifies a running Checkers target
-and stats `/proc/mtk_jpeg` without opening it.
+and stats `/proc/mtk_jpeg` without opening it. It also reports whether the
+running kernel contains the decoder implementation.
 
 ```sh
 make -C probes/mt8163-jpeg
@@ -21,8 +22,10 @@ The active INIT/DEINIT cycle is intentionally guarded by all three arguments:
 That mode must not be run merely because it builds. Before execution, review
 the connected-device evidence, confirm recovery and stable power, ensure no
 decoder operation is active, and obtain explicit operator approval. It only
-opens `/proc/mtk_jpeg`, issues INIT followed immediately by DEINIT, and closes
-the descriptor. Termination signals are blocked across that bounded sequence.
+opens `/proc/mtk_jpeg` read-only as the exact live vendor library does, issues
+INIT followed immediately by DEINIT, and closes the descriptor. It refuses
+before opening the node when the running kernel lacks the expected decoder
+symbols. Termination signals are blocked across the bounded sequence.
 
 The ABI constants come from the independently recorded interface in
 `docs/findings/checkers-v4.0.2-read-only-baseline.md` and are corroborated by

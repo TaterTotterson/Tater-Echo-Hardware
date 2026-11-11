@@ -28,7 +28,12 @@ Status: initial Checkers baseline complete; operation tracing remains.
 ## Milestone 3 — MT8163 media proof
 
 - [x] Record the live JPEG control requests and their ARM32 structure sizes.
-- [x] Prepare a target-gated INIT/DEINIT probe without executing active mode.
+- [x] Run the target-gated INIT preflight and identify the decoder path omitted
+  from the current Checkers kernel and device tree.
+- [x] Make subsequent active probes refuse kernels without decoder symbols.
+- [x] Prepare and compile-test the MT8163 decoder code and DVT resource patch.
+- Rebuild the complete kernel with pinned GCC 8.3 and the exact vendor-module
+  release suffix; do not package a boot image until that gate passes.
 - Map the remaining JPEG buffer, ION/M4U, VDEC, and display-manager interfaces.
 - Reproduce a single JPEG decode in an isolated probe.
 - Reproduce one H.264 decode into a private buffer.
