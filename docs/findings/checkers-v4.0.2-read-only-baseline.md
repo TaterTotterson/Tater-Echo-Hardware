@@ -113,4 +113,6 @@ device. It must:
 7. validate the output buffer without presenting it to the display.
 
 Running that probe is a separate, explicit hardware action. It was not
-performed during this baseline.
+performed during this baseline. The reviewed implementation is staged in
+[`probes/mt8163-jpeg`](../../probes/mt8163-jpeg/README.md); its host-safe
+description mode is tested, while its active mode remains deliberately unrun.

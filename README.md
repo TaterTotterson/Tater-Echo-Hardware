@@ -45,6 +45,21 @@ and the exact boundary between confirmed facts and the next device tests are in
 The first connected, read-only confirmation is in the
 [Checkers v4.0.2 baseline](docs/findings/checkers-v4.0.2-read-only-baseline.md).
 
+## Guarded hardware probes
+
+The first clean-room probe records the confirmed MT8163 JPEG control ABI. Its
+default mode is host-safe and does not open a device:
+
+```sh
+make -C probes/mt8163-jpeg
+probes/mt8163-jpeg/build/mt8163-jpeg-probe --describe
+```
+
+The probe's inspect and INIT/DEINIT modes are target-gated. Active mode also
+requires an explicit hardware-ioctl acknowledgement and must not be run without
+a separate device review and operator approval. See
+[the probe README](probes/mt8163-jpeg/README.md).
+
 Ghidra is optional until static analysis is requested. `debugfs` from
 e2fsprogs is needed for ext4 images, and `dtc` is needed to render appended
 device trees as source. ADB is optional until a physical device snapshot is
@@ -148,6 +163,6 @@ contents.
 ## Next work
 
 The staged plan is in [Roadmap](docs/roadmap.md). The first hardware proof will
-target one bounded MT8163 operation—preferably JPEG decode—before any production
-firmware integration.
+target a bounded MT8163 JPEG control operation before an isolated decode and
+any production firmware integration.
 

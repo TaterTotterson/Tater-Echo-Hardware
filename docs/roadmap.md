@@ -27,7 +27,9 @@ Status: initial Checkers baseline complete; operation tracing remains.
 
 ## Milestone 3 — MT8163 media proof
 
-- Map the JPEG, VDEC, ION/M4U, and display-manager kernel interfaces.
+- [x] Record the live JPEG control requests and their ARM32 structure sizes.
+- [x] Prepare a target-gated INIT/DEINIT probe without executing active mode.
+- Map the remaining JPEG buffer, ION/M4U, VDEC, and display-manager interfaces.
 - Reproduce a single JPEG decode in an isolated probe.
 - Reproduce one H.264 decode into a private buffer.
 - Present a decoded buffer through the existing Tater display path.

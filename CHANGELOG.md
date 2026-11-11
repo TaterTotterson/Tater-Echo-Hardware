@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Record a read-only Checkers v4.0.2 hardware baseline from the connected test
+  unit without retaining device identity, credentials, or raw capture data.
+- Add a clean-room MT8163 JPEG ABI probe whose safe default only describes the
+  interface and whose active INIT/DEINIT mode requires target verification and
+  explicit acknowledgement.
+
 ## 0.2.0 — 2026-11-10
 
 - Add read-only GPT, Android boot, MediaTek kernel, ramdisk, appended-DTB, and
