@@ -44,6 +44,9 @@ and the exact boundary between confirmed facts and the next device tests are in
 [the MT8163 baseline](docs/findings/mt8163-stock-offline-baseline.md).
 The first connected, read-only confirmation is in the
 [Checkers v4.0.2 baseline](docs/findings/checkers-v4.0.2-read-only-baseline.md).
+The complete pinned-toolchain kernel build, vendor-module ABI check, and
+unflashed boot-image result are in the
+[Checkers GCC 8.3 JPEG build](docs/findings/checkers-gcc8-jpeg-kernel-build.md).
 
 ## Guarded hardware probes
 

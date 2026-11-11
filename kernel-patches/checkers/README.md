@@ -9,18 +9,27 @@ kernel change.
 - The three affected files match their exact public-source SHA-256 values.
 - The patch applies cleanly to the complete source archive for
   `8d928c5176cc`.
-- A native ARM64 Linux compile with `checkers_defconfig` succeeds for the
-  composite JPEG driver and `checkers_dvt.dtb`.
-- The compiled object exports `jpeg_drv_dec_start`, `jpeg_drv_dec_reset`, and
+- The exact live `/proc/config.gz` was captured read-only and remains unchanged
+  after `olddefconfig` (SHA-256
+  `93bde8f9783a91ad4e5626030fd81b5f60112903d4466a24d08798c2d9568271`).
+- The complete kernel builds with Arm GCC 8.3-2019.03 and reports the required
+  release `4.9.337-g8d928c5176cc`.
+- The linked kernel exports `jpeg_drv_dec_start`, `jpeg_drv_dec_reset`, and
   `jpeg_drv_dec_set_config_data`.
-- The compiled DVT contains encoder/decoder register windows, SPI 208/209, and
-  VENC CKE2/CKE3 with the names consumed by the driver.
+- All five appended Checkers device trees contain encoder/decoder register
+  windows, SPI 208/209, and VENC CKE2/CKE3 with the names consumed by the
+  driver.
+- The live MT7668 Bluetooth module matches all 96 imported symbol CRCs and the
+  live Wi-Fi module matches all 203 imported symbol CRCs against the rebuilt
+  `Module.symvers`.
+- A donor-derived Android boot image was assembled offline with the exact live
+  Tater Recovery ramdisk. It is 13,498,368 bytes, fits the 16 MiB boot
+  partition with 3,278,848 bytes spare, and has not been flashed.
 
-That compile used GCC 12 as a structural check. Because the source archive has
-no Git metadata, its generated release was only `4.9.337`, not the vendor-module
-compatible `4.9.337-g8d928c5176cc`. No full kernel or boot image was built. The
-release's pinned GCC 8.3 toolchain and exact release suffix remain mandatory
-before any boot trial.
+The earlier GCC 12 object-only check remains useful as a quick structural
+test, but it is no longer the highest validation gate. Full evidence, input and
+artifact hashes, and the recovery boundary are recorded in
+[`docs/findings/checkers-gcc8-jpeg-kernel-build.md`](../../docs/findings/checkers-gcc8-jpeg-kernel-build.md).
 
 The running kernel proves that the JPEG encoder is present while the decoder
 code is compiled out. Enabling only `JPEG_DEC_DRIVER` is unsafe: the current
@@ -44,16 +53,19 @@ the MediaTek layout. Compile success cannot prove those assignments. The first
 boot must therefore stop at resource discovery and kernel-log inspection before
 any decoder ioctl is permitted.
 
-Before this can be booted, it must pass all of these gates:
+Before this can be used beyond offline validation, it must pass all of these
+gates:
 
-1. apply cleanly to the exact public commit;
-2. compile the complete kernel with `checkers_defconfig` and the release's
-   pinned toolchain;
-3. preserve the kernel release and vendor-module ABI;
-4. produce a donor-derived boot image with a known recovery path;
-5. boot as a trial on the owner-operated Checkers and confirm the new decoder
+1. apply cleanly to the exact public commit (complete);
+2. compile the complete kernel with the live configuration and pinned
+   toolchain (complete);
+3. preserve the kernel release and vendor-module ABI (complete);
+4. produce a donor-derived boot image that preserves Tater Recovery
+   (complete, offline only);
+5. prove that the retained TWRP fallback still boots before writing `boot`;
+6. boot as a trial on the owner-operated Checkers and confirm the new decoder
    resources without issuing CONFIG/START; and
-6. run the guarded INIT/DEINIT probe only after a fresh explicit approval.
+7. run the guarded INIT/DEINIT probe only after a fresh explicit approval.
 
 No current Tater release should consume this patch automatically.
 

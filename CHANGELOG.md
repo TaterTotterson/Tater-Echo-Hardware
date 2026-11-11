@@ -12,6 +12,12 @@
   opening its control node.
 - Add an exact-source-validated experimental kernel/resource patch and compile
   its decoder object and Checkers DVT without producing a bootable image.
+- Rebuild the complete Checkers kernel with the exact live configuration and
+  pinned Arm GCC 8.3 toolchain while preserving the vendor-module release.
+- Verify every imported symbol CRC used by the live MT7668 Bluetooth and Wi-Fi
+  modules against the rebuilt kernel.
+- Assemble and validate an unflashed donor-derived test boot image that keeps
+  the exact live Tater Recovery ramdisk and fits the 16 MiB boot partition.
 
 ## 0.2.0 — 2026-11-10
 
