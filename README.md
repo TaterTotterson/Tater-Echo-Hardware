@@ -42,6 +42,8 @@ The offline workbench provides:
 The first owner-local MT8163 stock image has been mapped offline. The evidence
 and the exact boundary between confirmed facts and the next device tests are in
 [the MT8163 baseline](docs/findings/mt8163-stock-offline-baseline.md).
+The first connected, read-only confirmation is in the
+[Checkers v4.0.2 baseline](docs/findings/checkers-v4.0.2-read-only-baseline.md).
 
 Ghidra is optional until static analysis is requested. `debugfs` from
 e2fsprogs is needed for ext4 images, and `dtc` is needed to render appended

@@ -124,3 +124,6 @@ Video presentation and microphone processing remain later experiments. The
 offline evidence identifies their components, but it does not justify issuing
 their hardware-control requests without runtime observation and a separate
 safety review.
+
+The first runtime observation is now recorded in the
+[Checkers v4.0.2 read-only baseline](checkers-v4.0.2-read-only-baseline.md).

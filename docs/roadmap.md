@@ -14,10 +14,12 @@ Status: complete for the first MT8163 offline baseline.
 
 ## Milestone 2 — read-only device evidence
 
-Status: ready for a connected test device.
+Status: initial Checkers baseline complete; operation tracing remains.
 
-- Snapshot platform, driver, device-node, ALSA, display, media, and firmware
-  metadata through ADB or SSH.
+- [x] Snapshot the first Checkers platform, driver, device-node, ALSA, display,
+  media, and firmware metadata through its read-only USB console.
+- [x] Correlate the exact live JPEG library hash and function addresses with
+  the running kernel interface.
 - Add scenario markers for a stock video start and microphone capture start.
 - Add bounded `open`, `mmap`, and `ioctl` observation without changing device
   behavior.
