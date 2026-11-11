@@ -38,7 +38,8 @@ Status: initial Checkers baseline complete; operation tracing remains.
   Wi-Fi modules.
 - [x] Assemble and verify an offline donor-derived boot image without flashing
   it.
-- Prove the retained TWRP fallback boots before any trial write to `boot`.
+- [x] Prove the retained TWRP fallback boots with root ADB before any trial
+  write to `boot`.
 - Map the remaining JPEG buffer, ION/M4U, VDEC, and display-manager interfaces.
 - Reproduce a single JPEG decode in an isolated probe.
 - Reproduce one H.264 decode into a private buffer.

@@ -62,7 +62,8 @@ gates:
 3. preserve the kernel release and vendor-module ABI (complete);
 4. produce a donor-derived boot image that preserves Tater Recovery
    (complete, offline only);
-5. prove that the retained TWRP fallback still boots before writing `boot`;
+5. prove that the retained TWRP fallback still boots before writing `boot`
+   (complete: TWRP 3.7.0_9-0 with root ADB);
 6. boot as a trial on the owner-operated Checkers and confirm the new decoder
    resources without issuing CONFIG/START; and
 7. run the guarded INIT/DEINIT probe only after a fresh explicit approval.

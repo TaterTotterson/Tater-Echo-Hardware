@@ -101,16 +101,29 @@ Read-only device evidence confirms:
 - `recovery` is `/dev/mmcblk0p10`, 16 MiB, Android boot magic,
   full-partition SHA-256
   `50d66b274e770ba2809980f97392c5835e4912a72835d9d5d1e4787e7efce336`;
+- `swdl` is `/dev/mmcblk0p11`, 32 MiB, Android boot magic,
+  full-partition SHA-256
+  `aae251ce7e4062e9cd8206c246cbd7e3b5df5ac14a719de679034f65de0430f1`;
 - the live boot image's used 13,492,224 bytes have SHA-256
   `3bee39e205d4a6499bdac7ab9be35f742376426f2218c81c587b8dd4394ce8df`;
   and
-- the live boot header uses the production 64-bit boot mode, while the retained
-  recovery header selects the 32-bit recovery mode.
+- `rebootto recovery` enters the retained TWRP in `swdl`, not the physical GPT
+  partition named `recovery`.
 
 Current Checkers v4 already has a Tater Recovery environment: it is the rescue
-initramfs in `boot`. TWRP deliberately remains in the separate `recovery`
-partition as the lower-level fallback. Replacing TWRP is therefore not required
-for this experiment and would be a separate 32-bit recovery-kernel project.
+initramfs in `boot`. The amonet/TWRP device environment intentionally maps both
+its `recovery` and `swdl` by-name links to physical `swdl` (`mmcblk0p11`), while
+the GPT's physical `recovery` remains `mmcblk0p10`. The different names must not
+be treated as interchangeable by a host-side flashing tool.
+
+The fallback was then booted with the MediaTek-aware `rebootto recovery`
+helper. TWRP 3.7.0_9-0 started its ARM32 `4.9.77-g1f91447-dirty` kernel, exposed
+root ADB, and showed `boot` as the correct physical `mmcblk0p9`. A normal reboot
+returned the unit to the ARM64 Tater Recovery kernel
+`4.9.337-g8d928c5176cc`. No partition was written during this test.
+
+Replacing TWRP is not required for the JPEG experiment and would be a separate
+32-bit recovery-kernel project.
 
 An offline test image was assembled from the exact live Tater Recovery ramdisk
 and the rebuilt kernel:
@@ -126,14 +139,40 @@ and the rebuilt kernel:
 Only the kernel-size field and boot ID changed in the donor header. No boot or
 recovery partition was written.
 
+After the TWRP round trip, the first 13,492,224 bytes of physical `boot` were
+read again in the normal rescue environment. Their SHA-256 remained
+`3bee39e205d4a6499bdac7ab9be35f742376426f2218c81c587b8dd4394ce8df`,
+exactly matching the ignored local rollback image.
+
+## Reviewed trial path
+
+The existing Checkers factory installer enters the bootloader and uses
+`fastboot flash boot`, followed by `fastboot continue`. That is the reviewed
+write path for this candidate as well. It addresses the bootloader's named
+`boot` target and avoids every ambiguous TWRP recovery alias.
+
+Before a trial, the host must check both local files again:
+
+- candidate SHA-256:
+  `07cf99a5ad51cfa1f7eb697245a669057594d04a609f1ab481054123c67c7715`;
+- rollback-image SHA-256:
+  `3bee39e205d4a6499bdac7ab9be35f742376426f2218c81c587b8dd4394ce8df`.
+
+The first boot should verify the release string, the decoder symbols, and
+resource-acquisition messages over the USB console without opening the decoder
+device. A read-only post-boot check of 6,591 2-KiB blocks from physical
+`mmcblk0p9` can then confirm that the flashed payload matches the candidate.
+
+If the candidate does not boot, holding Volume Up while powering on enters the
+verified TWRP fallback through the native boot chain. From there, the saved
+rollback image can be flashed back to the bootloader's named `boot` target.
+Neither physical `recovery` nor `swdl` should be modified for this trial.
+
 ## Remaining hardware gates
 
-1. Explicitly reboot the owner-operated device into the retained TWRP and
-   verify USB/ADB recovery access. This is a state-changing test and needs a
-   separate approval.
-2. Preserve the current boot image and its hashes outside the trial path.
-3. Write the candidate only through the reviewed Checkers factory/recovery
+1. Preserve the current boot image and its hashes outside the trial path.
+2. Write the candidate only through the reviewed Checkers factory/recovery
    path, never from an unverified normal boot.
-4. On the first boot, inspect only decoder resource discovery and kernel logs.
-5. Run the guarded INIT/DEINIT probe only after the resource evidence passes
+3. On the first boot, inspect only decoder resource discovery and kernel logs.
+4. Run the guarded INIT/DEINIT probe only after the resource evidence passes
    and a fresh active-ioctl approval is given.

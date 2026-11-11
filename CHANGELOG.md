@@ -18,6 +18,8 @@
   modules against the rebuilt kernel.
 - Assemble and validate an unflashed donor-derived test boot image that keeps
   the exact live Tater Recovery ramdisk and fits the 16 MiB boot partition.
+- Boot the retained Checkers TWRP 3.7.0 fallback, verify root ADB access, and
+  document amonet's intentional `recovery`-to-`swdl` partition alias.
 
 ## 0.2.0 — 2026-11-10
 
