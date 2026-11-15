@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -11,6 +12,19 @@ import tempfile
 ROOT=Path(__file__).resolve().parents[1]
 BUILDER='sha256:8f2fba1b9274e512524c572deb4dbb5abd92e15bb88b8620ea1e2cd24fe57a74'
 MANIFEST='ab77ccdd446064c327bf3fe150b3eeb73d65cc8f9bf3c5aeb79f7376725a5ef8'
+
+def install_script(uid, gid):
+    if any(type(value) is not int or not 0 <= value < 2**32 for value in (uid, gid)):
+        raise ValueError('invalid host ownership')
+    # Docker Desktop hides this distinction, but a native Linux runner cannot
+    # remove the root-owned package tree. Transfer ownership of this one fresh
+    # output subtree, including on APK failure. Never follow package symlinks.
+    return ("trap 'status=$?; trap - EXIT; "
+            "if [ -d /out/root ] && [ ! -L /out/root ]; then "
+            f"chown -hR {uid}:{gid} /out/root || exit 1; "
+            "fi; exit \"$status\"' EXIT\n"
+            'apk add --no-network --root /out/root --initdb --no-scripts '
+            '--keys-dir /etc/apk/keys --repositories-file /etc/apk/repositories /packages/*.apk')
 
 def digest(path):
     value=hashlib.sha256()
@@ -36,7 +50,7 @@ def prepare(packages,image,output):
         # Installation is isolated, offline, and has package scripts disabled.
         subprocess.run(['docker','run','--rm','--network','none','--platform','linux/arm/v7',
             '-v',str(packages.resolve())+':/packages:ro','-v',str(stage)+':/out',image,'sh','-ec',
-            'apk add --no-network --root /out/root --initdb --no-scripts --keys-dir /etc/apk/keys --repositories-file /etc/apk/repositories /packages/*.apk'],check=True)
+            install_script(getattr(os,'getuid',lambda:0)(),getattr(os,'getgid',lambda:0)())],check=True)
         source=stage/'root'
         runtime=stage/'runtime'
         (runtime/'lib').mkdir(parents=True)
