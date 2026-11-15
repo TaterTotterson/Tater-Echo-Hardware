@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Make four Android O imports available to a preloaded compatibility DSO."""
 
+from __future__ import annotations
+
 import pathlib
 import struct
 import sys

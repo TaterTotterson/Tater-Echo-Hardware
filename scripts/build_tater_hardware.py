@@ -46,6 +46,11 @@ def build(lock: dict, ndk: Path, headers: Path, libraries: Path, output: Path) -
     target = lock.get("target")
     if lock.get("schema") != 1 or target not in ("checkers", "cronos", "crown", "rook"):
         raise ValueError("only qualified target-owned helper locks are supported")
+    profile = lock.get("codec_profile", "legacy")
+    if profile not in ("legacy", "checkers-lineage-1") or (profile != "legacy" and target != "checkers"):
+        raise ValueError("codec profile is not valid for this target")
+    if profile == "checkers-lineage-1" and lock["link_libraries"]:
+        raise ValueError("the retained-Lineage Checkers profile takes no private link libraries")
     if output.exists() or output.is_symlink():
         raise ValueError("output exists; refusing to replace it")
     verify_sources(ROOT, lock)
@@ -104,14 +109,20 @@ def build(lock: dict, ndk: Path, headers: Path, libraries: Path, output: Path) -
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / relative, destination)
         subprocess.run(["make", "-C", str(tree / "probes/mt8163-gpu"), "build/api28/tater-gpu-rotate"], env=environment, check=True)
-        codec_target = target if target in ("cronos", "crown", "rook") else "tater"
-        subprocess.run(["make", "-C", str(tree / "probes/mt8163-vcodec"),
-                        "android-"+codec_target+"-vdec", "android-"+codec_target+"-venc"], env=environment, check=True)
+        if profile == "checkers-lineage-1":
+            subprocess.run(["make", "-C", str(tree / "probes/checkers-lineage-codec"), "all"], env=environment, check=True)
+        else:
+            codec_target = target if target in ("cronos", "crown", "rook") else "tater"
+            subprocess.run(["make", "-C", str(tree / "probes/mt8163-vcodec"),
+                            "android-"+codec_target+"-vdec", "android-"+codec_target+"-venc"], env=environment, check=True)
         products = {
             "tater-hw-gpu": tree / "probes/mt8163-gpu/build/api28/tater-gpu-rotate",
             "tater-hw-vdec": tree / (f"probes/mt8163-vcodec/build/tater-{target}-vdec" if target in ("cronos", "crown", "rook") else "probes/mt8163-vcodec/build/tater-vdec"),
             "tater-hw-venc": tree / (f"probes/mt8163-vcodec/build/tater-{target}-venc" if target in ("cronos", "crown", "rook") else "probes/mt8163-vcodec/build/tater-venc"),
         }
+        if profile == "checkers-lineage-1":
+            products.update({name: tree / "probes/checkers-lineage-codec/build" / name
+                             for name in ("tater-hw-vdec", "tater-hw-venc")})
         for name, path in products.items():
             if digest(path) != lock["helpers"][name]:
                 raise ValueError(f"rebuilt {name} differs from the hardware-qualified binary")

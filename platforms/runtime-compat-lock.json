@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "ndk_properties_sha256": "f60a3592fa8ee5a77759aa6855d91def4cc8f774dc31137becf65f0a34374ad2",
+  "sync_source_url": "https://android.googlesource.com/platform/system/core/+/android-9.0.0_r1/libsync/",
+  "sync_sources": {
+    "NOTICE": "efcb3b0d1a6686c84546d85d1ad53ae01b0535443972c1f33eb248ae24b8357d",
+    "include/android/sync.h": "2da5429fb0f9bf1cdacf30f01df8b9346f2282fb5277458412079c2e3f6b6e4f",
+    "include/ndk/sync.h": "ead1df68d6e250ef34472d52b682fe79624191fac7cd5d04894161b06c7bc5e5",
+    "libsync.map.txt": "cec5e894c1c792a6d824b37103dafda463607b31fb109d8f40bfae2053600358",
+    "sync.c": "f25b960d4f5c49d25a2f39c9ed1a3d1eda5394d29643d61136595cf57b0d4ea7"
+  },
+  "files": {
+    "libbionic28compat.so": "e98b5822d5e3e2ba5cc88da3a3f0aca0b9309af7f59b35c2d8ea42fdaec4f216",
+    "libged.so": "f3b48ec350b7fc19e409f3ba99a7b6645f43a090339102fce85d19b4d79f6cd4",
+    "libgpu_aux.so": "b2447f9655074cd446e79bcc781f44a5b39fb94812cfdc93983c1554b3a9fbcd",
+    "libgralloc_extra.so": "f847adaaa52e9aa5bb42296f3fc347260f909c5317a0075c51010229db3cb563",
+    "libnativewindow.so": "212fe8c6fb70dfbe0edc60b83c86945a401f0335fdd12c6d73b66c6a4b0c4f72",
+    "libvndksupport.so": "d415f8ae4ab630bfe6f809e72f14317a727156b8c607a1e9fe49515661294096",
+    "libGLESv1_CM.so": "f510f8d0ff4a66bfe16d5e1e70343fdbfbdd2f1aa6422f3f18775abab81bd615",
+    "libion_ulit.so": "6790909777094d628fa4337c5a4928d1bf3559cd2ce4ca6200d5507611d9f713",
+    "libsync.so": "74336925a40e086da6992351aa8449e0a69f502e80597667ab12af50ae71a7fe"
+  },
+  "sources": {
+    "probes/mt8163-gpu/bionic28_compat.c": "66249a88e941c87802ec0c9781ff71500a4a8758baf87e1cc1b81c756c2da844",
+    "probes/mt8163-gpu/bionic28_compat.map": "088448eb2199112d562458b21d04cb015b578a9afca0c07ebbef3c491b543a16",
+    "probes/mt8163-gpu/gpu_optional_shims.c": "d106051895b08023b24e50822dae0d1bc6661c0b08ff37b1558763a426268a6c",
+    "probes/mt8163-gpu/libged.map": "9f64cb3f3c092c4949ed115e96635eb7cb4a65077c4f4d48d3e9b7d67a900bb9",
+    "probes/mt8163-gpu/libgpu_aux.map": "629af4904c5b1fe23cba39b6e760570666f6fe00e2ca614a5ced6de1aa93e29d",
+    "probes/mt8163-gpu/libgralloc_extra.map": "1e08220b55c397e5c8c909bc1c6bd0a629432996f51868f95434071824c9bf15",
+    "probes/mt8163-gpu/nativewindow_shim.c": "957df08b92f2ec9932ebcc9ddb1353921ae92857d99701752ea4fffaf03d4b98",
+    "probes/mt8163-gpu/vndksupport_shim.c": "4f18e7a0bfef0babacd4607704b4f0fa1ec0aea181a47dabb5aabdc22d4af602",
+    "probes/mt8163-gpu/gles_dependency_alias.c": "cd9bc11c1564225170c384dbd8267151cd4e2f36afb3f4708fa6305e3ca4a94e",
+    "probes/mt8163-gpu/Makefile": "b9026fd0abebfedcaf57e2f36458eb286fd677ccfd9f0ef6079966abc5be334a",
+    "probes/mt8163-vcodec/cronos_ion_diagnostics.c": "324dc7fc41db360c10977cccc7e012fe04db18eeae3695e513886c5ab68bbe48",
+    "scripts/build_runtime_compat.py": "74f7f1aafc51b3efe5a2169efb4f2c7deac3819173b95d9de2e26bbf1eacbdb9"
+  },
+  "gles_link_sha256": "dcb3eac3dd0f220124b39c5a44b0e8a4d5caeb475fe9465db45d8f5f9a75f04d"
+}

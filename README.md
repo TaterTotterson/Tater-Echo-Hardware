@@ -109,6 +109,12 @@ slot, while private libraries remain unchanged. See the firmware repository's
 `docs/checkers-hardware-build.md` for the complete workflow and remaining
 publication, kernel migration and installed-hardware qualification gates.
 
+The [owner-runtime supply-chain audit](docs/findings/owner-runtime-supply-chain.md)
+records the remaining general-user installer gaps. It includes a hash-locked
+offline assembler for retained MT8163 Lineage libraries and a **separate,
+unqualified Checkers Lineage codec candidate**. Neither tool installs firmware
+or replaces the published hardware-qualified helper bundles.
+
 The first clean-room probe records the confirmed MT8163 JPEG control ABI. Its
 default mode is host-safe and does not open a device:
 

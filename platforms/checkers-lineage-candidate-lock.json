@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "target": "checkers",
+  "release_qualified": false,
+  "bundle_id": "checkers-lineage-candidate-20261115.1",
+  "ndk_properties_sha256": "f60a3592fa8ee5a77759aa6855d91def4cc8f774dc31137becf65f0a34374ad2",
+  "headers": {
+    "android_frameworks_native": "dd2ce3e0509deeeb3344f047d09b8661b360a968",
+    "android_hardware_libhardware": "b5288579191c94da0ce1814dee0136eb49eec9ae",
+    "android_system_core": "2b5b9169a441f0ecb34651f146f37411a0a77c13"
+  },
+  "helpers": {
+    "tater-hw-vdec": "247f414fd971554227ae422357062b5ed691836b8f66516c0884fc1c0ff7cae2",
+    "tater-hw-venc": "2d5ad722019a6744568a4b445e2108242dafe5d20d2f1a6913e04cb0ba99b4ea"
+  },
+  "sources": {
+    "scripts/build_checkers_lineage.py": "a4a927db8a195a08fb09be3c069b21b3841f28b7cf1b8f1d5213300e81e323bc",
+    "probes/checkers-lineage-codec/Makefile": "0441e1b006519bf135eb49224c4624beaad98c50ba60c78aadab385e0fc04088",
+    "probes/checkers-lineage-codec/checkers_target.h": "b303f1aa73031a69bd20571d2c2a193c08b88622a6387f26727e22931a1f3a7d",
+    "probes/checkers-lineage-codec/decoder_main.c": "6743ebb68faa49d947a7381497dc22ba3854eeee0ebc62d0645fbd80fac7df20",
+    "probes/checkers-lineage-codec/encoder_main.c": "9e4b83236eeda093ced68444530182c572266b9bdabe0fd6c972a1be3d4305e0",
+    "probes/mt8163-vcodec/tater_vdec_android.c": "49f191f883360e04f476133c984f745a47894e118154c71e1a54acc99d77e9d4",
+    "probes/mt8163-vcodec/tater_vdec_android.h": "60a3fb46514ed7b0f34c28cb970f244152bb9255b9a4ef9f94fa4ff06a76c7ac",
+    "probes/mt8163-vcodec/omx_probe_android.c": "51e7d38c628779c639e14e0e3f6e766a0a654685ef26aca6ab797b2e13c6ec8e",
+    "probes/mt8163-vcodec/omx_probe_android.h": "c39310ed3a288fd8d7524f3df42ecd18c1a9de58d35bcc243235779cae007e0b",
+    "probes/mt8163-vcodec/cronos_linear_rgba.h": "5aa1321a9774a9abb209f234a8111ef1833cc24451cbea2aa1fff506cad3ff44",
+    "probes/mt8163-vcodec/venc_probe_android.c": "d21722d113361b4b1a9432a3097a9599a26679f7cc8fb8dc10cd171516702517",
+    "probes/mt8163-vcodec/tater_bayer10.c": "59e417935efa185dea70298d3955dc4087b64da7074bd509bf805deaa40255cd",
+    "probes/mt8163-vcodec/tater_bayer10.h": "554a63482ca6d71318ac4f24108450b522c518ddb799bc9ba63833f636dd59bb",
+    "probes/mt8163-vcodec/bayer10_scaled.h": "43c170dc3f9659981bd4b8b68464ffc2fb2cedcb3c4969d824897c6f3292d361",
+    "probes/mt8163-vcodec/planar_chroma.h": "8c454955444537acebe2427b27257d40abb1b798155bb42770eb7280316b8dfc"
+  }
+}

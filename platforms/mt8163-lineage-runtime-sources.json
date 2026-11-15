@@ -1,0 +1,548 @@
+{
+  "schema": 1,
+  "ndk_properties_sha256": "f60a3592fa8ee5a77759aa6855d91def4cc8f774dc31137becf65f0a34374ad2",
+  "vndk_commit": "1cb210981d2baf325aaab36cdd84afa40c775f00",
+  "sdk": "Android API24 default armeabi-v7a revision7",
+  "sources": {
+    "probes/mt8163-gpu/bionic28_compat.c": "66249a88e941c87802ec0c9781ff71500a4a8758baf87e1cc1b81c756c2da844",
+    "probes/mt8163-gpu/bionic28_compat.map": "088448eb2199112d562458b21d04cb015b578a9afca0c07ebbef3c491b543a16",
+    "probes/mt8163-gpu/gpu_optional_shims.c": "d106051895b08023b24e50822dae0d1bc6661c0b08ff37b1558763a426268a6c",
+    "probes/mt8163-gpu/libged.map": "9f64cb3f3c092c4949ed115e96635eb7cb4a65077c4f4d48d3e9b7d67a900bb9",
+    "probes/mt8163-gpu/libgpu_aux.map": "629af4904c5b1fe23cba39b6e760570666f6fe00e2ca614a5ced6de1aa93e29d",
+    "probes/mt8163-gpu/libgralloc_extra.map": "1e08220b55c397e5c8c909bc1c6bd0a629432996f51868f95434071824c9bf15",
+    "probes/mt8163-gpu/nativewindow_shim.c": "957df08b92f2ec9932ebcc9ddb1353921ae92857d99701752ea4fffaf03d4b98",
+    "probes/mt8163-gpu/vndksupport_shim.c": "4f18e7a0bfef0babacd4607704b4f0fa1ec0aea181a47dabb5aabdc22d4af602",
+    "probes/mt8163-gpu/gles_dependency_alias.c": "cd9bc11c1564225170c384dbd8267151cd4e2f36afb3f4708fa6305e3ca4a94e",
+    "probes/mt8163-gpu/neutralize_libc_o.py": "39c6ce7c8a1118d6f7265eb1d991ce8fe1b78497b22b46e6b854cd10dca35bdc",
+    "probes/mt8163-gpu/Makefile": "b9026fd0abebfedcaf57e2f36458eb286fd677ccfd9f0ef6079966abc5be334a",
+    "probes/mt8163-vcodec/cronos_ion_diagnostics.c": "324dc7fc41db360c10977cccc7e012fe04db18eeae3695e513886c5ab68bbe48"
+  },
+  "runtimes": {
+    "gpu": {
+      "tree_sha256": "bc75d30a7be167b827e89b1d7629ec5dc4b528c99106d0b1e9beed02b4815561",
+      "file_count": 34,
+      "runtime_bytes": 37506624,
+      "files": {
+        "linker": {
+          "kind": "sdk24",
+          "path": "linker",
+          "sha256": "b9c6e172a16c5e1337cca905bc3457392e877ffc3b040e250929a5ca56afdaaa"
+        },
+        "lib/android.hardware.graphics.common@1.0.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/android.hardware.graphics.common@1.0.so",
+          "sha256": "4099e2bf1c1550391b9e20347bd5c9c93e35bfc98cb3922fb7bcb3544073e259"
+        },
+        "lib/libGLES_mali.so": {
+          "kind": "vendor",
+          "path": "egl/libGLES_mali.so",
+          "sha256": "dcb3eac3dd0f220124b39c5a44b0e8a4d5caeb475fe9465db45d8f5f9a75f04d"
+        },
+        "lib/libbacktrace.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libbacktrace.so",
+          "sha256": "bf4e6b3ecf7d14db8e5e62e2f72b3bd42cf58a57deb4e34b1835e750a6b9af54"
+        },
+        "lib/libbase.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libbase.so",
+          "transform": "neutralize-libc-o",
+          "input_sha256": "ce5af18fea3001895a079e74dc712f9c6473e19c7b7657dc3b5a2733c4f27b3e",
+          "sha256": "597b5b12f67d432c399e69eb0bb196024228af20d2a2a4dee3127009d6ed4f59"
+        },
+        "lib/libbase.so.orig": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libbase.so",
+          "sha256": "ce5af18fea3001895a079e74dc712f9c6473e19c7b7657dc3b5a2733c4f27b3e"
+        },
+        "lib/libbionic28compat.so": {
+          "kind": "shims",
+          "path": "libbionic28compat.so",
+          "sha256": "e98b5822d5e3e2ba5cc88da3a3f0aca0b9309af7f59b35c2d8ea42fdaec4f216"
+        },
+        "lib/libc++.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libc++.so",
+          "transform": "neutralize-libc-o",
+          "input_sha256": "812b7edee3e7ebed369a9dac66921c93098e15617c995e3f58e7143e3aac522e",
+          "sha256": "7657d3741f92ad6e793283d40b7930b7b3e9c9eca902e4af063c917ee910bb68"
+        },
+        "lib/libc++.so.orig": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libc++.so",
+          "sha256": "812b7edee3e7ebed369a9dac66921c93098e15617c995e3f58e7143e3aac522e"
+        },
+        "lib/libc.so": {
+          "kind": "sdk24",
+          "path": "lib/libc.so",
+          "sha256": "076861a228fd9c7a41c164d625b6141fd1e0c6d74b814b484e136dc3b64c2232"
+        },
+        "lib/libcutils.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libcutils.so",
+          "transform": "neutralize-libc-o",
+          "input_sha256": "04e41f96159bbcf30255e1c69b8b70218efc20ccc301ab27e7a07248964f0ebe",
+          "sha256": "2c185b10de381cc4eb8767a3958c5c62850b1d8d1dbb20deb5a0c64af8f673c3"
+        },
+        "lib/libcutils.so.orig": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libcutils.so",
+          "sha256": "04e41f96159bbcf30255e1c69b8b70218efc20ccc301ab27e7a07248964f0ebe"
+        },
+        "lib/libdl.so": {
+          "kind": "sdk24",
+          "path": "lib/libdl.so",
+          "sha256": "0ede9f6cf5fbee3fe31d093b13613db9561c382d5e7ad64e79f43b5f6541e8ff"
+        },
+        "lib/libdpframework.so": {
+          "kind": "vendor",
+          "path": "libdpframework.so",
+          "sha256": "1b66dc624f4968cd21bcd2180962def11dcddc92b05fa6322b5b6cb382c11564"
+        },
+        "lib/libged.so": {
+          "kind": "shims",
+          "path": "libged.so",
+          "sha256": "f3b48ec350b7fc19e409f3ba99a7b6645f43a090339102fce85d19b4d79f6cd4"
+        },
+        "lib/libgpu_aux.so": {
+          "kind": "shims",
+          "path": "libgpu_aux.so",
+          "sha256": "b2447f9655074cd446e79bcc781f44a5b39fb94812cfdc93983c1554b3a9fbcd"
+        },
+        "lib/libgralloc_extra.so": {
+          "kind": "shims",
+          "path": "libgralloc_extra.so",
+          "sha256": "f847adaaa52e9aa5bb42296f3fc347260f909c5317a0075c51010229db3cb563"
+        },
+        "lib/libhardware.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libhardware.so",
+          "sha256": "ea5327d9d001719810cd2e637a3df0d96f5d155ad812091557381a073a8a8a06"
+        },
+        "lib/libhidlbase.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libhidlbase.so",
+          "sha256": "734e7ee68c2b9ba5afb8dcf52d0b1ba35fff66437a6ad134ac4d8db9e26db9b0"
+        },
+        "lib/libhidltransport.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libhidltransport.so",
+          "sha256": "c1c763dd2ff14173e9c5dd48ffa195cfb63bd2fd82df7116540146f83059a00d"
+        },
+        "lib/libhwbinder.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libhwbinder.so",
+          "sha256": "82f154eb7147c84c55562fc41b224952b18848aecdc37ad7f877486c0aa0a060"
+        },
+        "lib/libion.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libion.so",
+          "sha256": "de3e597edc16f5a8de1a025a4ef31777a582545cd81979bcbf4aeff63afa8626"
+        },
+        "lib/libion_mtk.so": {
+          "kind": "vendor",
+          "path": "libion_mtk.so",
+          "sha256": "f14b60503b4a109158a732c019ece0d47b39ec2d603e00f182497edafde8355f"
+        },
+        "lib/libion_ulit.so": {
+          "kind": "vendor",
+          "path": "libion_ulit.so",
+          "sha256": "639b31a2622bf02f7edcc8ff35c92b2edb63c70ebdd7029aba159f8108e7ce67"
+        },
+        "lib/liblog.so": {
+          "kind": "sdk24",
+          "path": "lib/liblog.so",
+          "sha256": "b523f127b429530ef141a19c735b9be09b19303009dc0212277b76866dd6112a"
+        },
+        "lib/liblzma.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/liblzma.so",
+          "sha256": "2f8e3b417bb82d94b6893046b6329a1fcfb27f53f451212868cc30247152ac70"
+        },
+        "lib/libm.so": {
+          "kind": "sdk24",
+          "path": "lib/libm.so",
+          "sha256": "0b8893c6470034862bc571bf940bb65b7c31cedddfe91ea6578dc7a50efeb4e8"
+        },
+        "lib/libm4u.so": {
+          "kind": "vendor",
+          "path": "libm4u.so",
+          "sha256": "2ef01c1046457d2bccfbea366cf387543a37253d767c24e8ad38a96dd63a1a86"
+        },
+        "lib/libnativewindow.so": {
+          "kind": "shims",
+          "path": "libnativewindow.so",
+          "sha256": "212fe8c6fb70dfbe0edc60b83c86945a401f0335fdd12c6d73b66c6a4b0c4f72"
+        },
+        "lib/libsync.so": {
+          "kind": "sdk24",
+          "path": "lib/libsync.so",
+          "sha256": "c2d593223a4548c01ba65bee6e1248121f3fc15788181a5acbb4562c80c81499"
+        },
+        "lib/libunwindstack.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libunwindstack.so",
+          "sha256": "87861c713ae6fcee92aa59c8ff8b5022e075a43a9fbc50533baf5f5164ca2a44"
+        },
+        "lib/libutils.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libutils.so",
+          "sha256": "aa897d4311500863882b4901837902baae3a5f837ae6f67ebb972afba339a4ca"
+        },
+        "lib/libvndksupport.so": {
+          "kind": "shims",
+          "path": "libvndksupport.so",
+          "sha256": "d415f8ae4ab630bfe6f809e72f14317a727156b8c607a1e9fe49515661294096"
+        },
+        "lib/libz.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libz.so",
+          "sha256": "93ee222988a1371d863fa631d7a70dcdab1f1d3432f0d28f0552ce12b78d8b8b"
+        }
+      }
+    },
+    "codec": {
+      "tree_sha256": "8564d383faba23c32545037f62a7ab9ddddf227a61790470dbc883e6eb871f0a",
+      "file_count": 66,
+      "runtime_bytes": 41926684,
+      "files": {
+        "linker": {
+          "kind": "sdk24",
+          "path": "linker",
+          "sha256": "b9c6e172a16c5e1337cca905bc3457392e877ffc3b040e250929a5ca56afdaaa"
+        },
+        "lib/android.hardware.configstore-utils.so": {
+          "kind": "vndk28",
+          "path": "vndk-core/android.hardware.configstore-utils.so",
+          "sha256": "d9fefc36020ae3972240cf24ec377e6da4090d1d7ff0aec4acadb3a2659a5767"
+        },
+        "lib/android.hardware.configstore@1.0.so": {
+          "kind": "vndk28",
+          "path": "vndk-core/android.hardware.configstore@1.0.so",
+          "sha256": "1acaf54d3437b8157b0a99a59ead525cd25e91708ae34747deb2d4d3461e62c2"
+        },
+        "lib/android.hardware.configstore@1.1.so": {
+          "kind": "vndk28",
+          "path": "vndk-core/android.hardware.configstore@1.1.so",
+          "sha256": "72bcb810262e9995677e3b8845c67f05f2a69c38ce80761167bd9207ee506e49"
+        },
+        "lib/android.hardware.graphics.allocator@2.0.so": {
+          "kind": "vndk28",
+          "path": "vndk-core/android.hardware.graphics.allocator@2.0.so",
+          "sha256": "c67f209c86205eeb8031d5b99e3725e3c7d24f140aaf3867ca879968d3daa415"
+        },
+        "lib/android.hardware.graphics.bufferqueue@1.0.so": {
+          "kind": "vndk28",
+          "path": "vndk-core/android.hardware.graphics.bufferqueue@1.0.so",
+          "sha256": "5266bdc0214306ad9ad38dabe3f581d5914bfdceb666fa61a6b6960a9e796899"
+        },
+        "lib/android.hardware.graphics.common@1.0.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/android.hardware.graphics.common@1.0.so",
+          "sha256": "4099e2bf1c1550391b9e20347bd5c9c93e35bfc98cb3922fb7bcb3544073e259"
+        },
+        "lib/android.hardware.graphics.common@1.1.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/android.hardware.graphics.common@1.1.so",
+          "sha256": "89470538aeb9be676e86610bd1b8cfe33f2b36dfa72d1c305eb6ee880dca3342"
+        },
+        "lib/android.hardware.graphics.mapper@2.0.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/android.hardware.graphics.mapper@2.0.so",
+          "sha256": "d7466dc628b2b073e09125a07ad4bd0b06d40f76e9cd5ff37408d3a228f7b00b"
+        },
+        "lib/android.hardware.graphics.mapper@2.1.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/android.hardware.graphics.mapper@2.1.so",
+          "sha256": "b770834c656fcb858843353e649eb205c0d1a23feba06ec9b1b85d36f43c1097"
+        },
+        "lib/android.hardware.media.omx@1.0.so": {
+          "kind": "vndk28",
+          "path": "vndk-core/android.hardware.media.omx@1.0.so",
+          "sha256": "b96a78c523b13df4bd8bc484ae91ff0b2c38bacd00b48a2630d241dca1b810a8"
+        },
+        "lib/android.hardware.media@1.0.so": {
+          "kind": "vndk28",
+          "path": "vndk-core/android.hardware.media@1.0.so",
+          "sha256": "b42b176aede0e0fa564b766733b2fb02985b912d7c90bc747ae99163bfd94151"
+        },
+        "lib/gralloc.mt8163.so": {
+          "kind": "vendor",
+          "path": "hw/gralloc.mt8163.so",
+          "sha256": "caa3ef25813be03a8c68d03ac6a5a382f79e0df9e0e41f90861885200710b97d"
+        },
+        "lib/libGLES_mali.so": {
+          "kind": "vendor",
+          "path": "egl/libGLES_mali.so",
+          "sha256": "dcb3eac3dd0f220124b39c5a44b0e8a4d5caeb475fe9465db45d8f5f9a75f04d"
+        },
+        "lib/libGLESv1_CM.so": {
+          "kind": "shims",
+          "path": "libGLESv1_CM.so",
+          "sha256": "f510f8d0ff4a66bfe16d5e1e70343fdbfbdd2f1aa6422f3f18775abab81bd615"
+        },
+        "lib/libGdmaScalerPipe.so": {
+          "kind": "vendor",
+          "path": "libGdmaScalerPipe.so",
+          "sha256": "2ce40ea5400a70bec688d6d29cda0346dfcc28a143639489704c948ce57a6b75"
+        },
+        "lib/libJpgDecPipe.so": {
+          "kind": "vendor",
+          "path": "libJpgDecPipe.so",
+          "sha256": "62e3566f07d02a1df93e583e65464f6067a32fba330d0714d113663f516e4d8f"
+        },
+        "lib/libMtkOmxVdecEx.so": {
+          "kind": "vendor",
+          "path": "libMtkOmxVdecEx.so",
+          "sha256": "812cd2a56b50e994fee60cdb92d3b0c82ff339d25b55c55d31ac9233f7b6ee89"
+        },
+        "lib/libMtkOmxVenc.so": {
+          "kind": "vendor",
+          "path": "libMtkOmxVenc.so",
+          "sha256": "161020e59faad3b1d250dcc3db168ce9109c08c8b2f02bc736109356f7ed5db4"
+        },
+        "lib/libSwJpgCodec.so": {
+          "kind": "vendor",
+          "path": "libSwJpgCodec.so",
+          "sha256": "e4473275e049980c385b108207110a972e282f9df261dcb83b5defa496ac4f94"
+        },
+        "lib/libbacktrace.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libbacktrace.so",
+          "sha256": "bf4e6b3ecf7d14db8e5e62e2f72b3bd42cf58a57deb4e34b1835e750a6b9af54"
+        },
+        "lib/libbase.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libbase.so",
+          "transform": "neutralize-libc-o",
+          "input_sha256": "ce5af18fea3001895a079e74dc712f9c6473e19c7b7657dc3b5a2733c4f27b3e",
+          "sha256": "597b5b12f67d432c399e69eb0bb196024228af20d2a2a4dee3127009d6ed4f59"
+        },
+        "lib/libbinder.so": {
+          "kind": "vndk28",
+          "path": "vndk-core/libbinder.so",
+          "sha256": "db30224904301a713208ff453ad5605b96f89d2c84b95e4cf04dda3ecf0f19ef"
+        },
+        "lib/libbionic28compat.so": {
+          "kind": "shims",
+          "path": "libbionic28compat.so",
+          "sha256": "e98b5822d5e3e2ba5cc88da3a3f0aca0b9309af7f59b35c2d8ea42fdaec4f216"
+        },
+        "lib/libbwc.so": {
+          "kind": "vendor",
+          "path": "libbwc.so",
+          "sha256": "3d6539c80d840fe19a6f7353a2f5c90899fe093b118326d31f4dd6ce9838c4ed"
+        },
+        "lib/libc++.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libc++.so",
+          "transform": "neutralize-libc-o",
+          "input_sha256": "812b7edee3e7ebed369a9dac66921c93098e15617c995e3f58e7143e3aac522e",
+          "sha256": "7657d3741f92ad6e793283d40b7930b7b3e9c9eca902e4af063c917ee910bb68"
+        },
+        "lib/libc.so": {
+          "kind": "sdk24",
+          "path": "lib/libc.so",
+          "sha256": "076861a228fd9c7a41c164d625b6141fd1e0c6d74b814b484e136dc3b64c2232"
+        },
+        "lib/libcutils.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libcutils.so",
+          "transform": "neutralize-libc-o",
+          "input_sha256": "04e41f96159bbcf30255e1c69b8b70218efc20ccc301ab27e7a07248964f0ebe",
+          "sha256": "2c185b10de381cc4eb8767a3958c5c62850b1d8d1dbb20deb5a0c64af8f673c3"
+        },
+        "lib/libdl.so": {
+          "kind": "sdk24",
+          "path": "lib/libdl.so",
+          "sha256": "0ede9f6cf5fbee3fe31d093b13613db9561c382d5e7ad64e79f43b5f6541e8ff"
+        },
+        "lib/libdpframework.so": {
+          "kind": "vendor",
+          "path": "libdpframework.so",
+          "sha256": "1b66dc624f4968cd21bcd2180962def11dcddc92b05fa6322b5b6cb382c11564"
+        },
+        "lib/libged.so": {
+          "kind": "vendor",
+          "path": "libged.so",
+          "sha256": "b9ac0f6f51828dbefaf371a81202def5dce39a1a4eb708f48f4c6e69a7c2296c"
+        },
+        "lib/libgpu_aux.so": {
+          "kind": "vendor",
+          "path": "libgpu_aux.so",
+          "sha256": "05800127aa6e26d2a6112e34d4d1f58ca50ce6fa52792637d195ac09e170e6c3"
+        },
+        "lib/libgralloc_extra.so": {
+          "kind": "vendor",
+          "path": "libgralloc_extra.so",
+          "sha256": "6dba915041984215e1596efd63e40616b0470d2c5fc28b039859060ac3b5da5d"
+        },
+        "lib/libhardware.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libhardware.so",
+          "sha256": "ea5327d9d001719810cd2e637a3df0d96f5d155ad812091557381a073a8a8a06"
+        },
+        "lib/libhevce_sb.ca7.android.so": {
+          "kind": "vendor",
+          "path": "libhevce_sb.ca7.android.so",
+          "sha256": "ad5f0802acff548c9a705dc7d3dd35b174a6f6371ae43fe7470f8433ec45c42d"
+        },
+        "lib/libhidlbase.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libhidlbase.so",
+          "sha256": "734e7ee68c2b9ba5afb8dcf52d0b1ba35fff66437a6ad134ac4d8db9e26db9b0"
+        },
+        "lib/libhidltransport.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libhidltransport.so",
+          "sha256": "c1c763dd2ff14173e9c5dd48ffa195cfb63bd2fd82df7116540146f83059a00d"
+        },
+        "lib/libhwbinder.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libhwbinder.so",
+          "sha256": "82f154eb7147c84c55562fc41b224952b18848aecdc37ad7f877486c0aa0a060"
+        },
+        "lib/libion.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libion.so",
+          "sha256": "de3e597edc16f5a8de1a025a4ef31777a582545cd81979bcbf4aeff63afa8626"
+        },
+        "lib/libion_mtk.so": {
+          "kind": "vendor",
+          "path": "libion_mtk.so",
+          "sha256": "f14b60503b4a109158a732c019ece0d47b39ec2d603e00f182497edafde8355f"
+        },
+        "lib/libion_ulit.so": {
+          "kind": "shims",
+          "path": "libion_ulit.so",
+          "sha256": "6790909777094d628fa4337c5a4928d1bf3559cd2ce4ca6200d5507611d9f713"
+        },
+        "lib/libjpeg-alpha_vendor.so": {
+          "kind": "vendor",
+          "path": "libjpeg-alpha_vendor.so",
+          "sha256": "ce52871b5cce39f682562420b842d536cdb0d94ef3de28cc8b01824dbdcfab6b"
+        },
+        "lib/libladder.so": {
+          "kind": "vendor",
+          "path": "libladder.so",
+          "sha256": "836e8b57ebed9d3c0811f3d25b8effb404dfad90ea0e0407801b5805d160ed8f"
+        },
+        "lib/liblog.so": {
+          "kind": "sdk24",
+          "path": "lib/liblog.so",
+          "sha256": "b523f127b429530ef141a19c735b9be09b19303009dc0212277b76866dd6112a"
+        },
+        "lib/liblzma.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/liblzma.so",
+          "sha256": "2f8e3b417bb82d94b6893046b6329a1fcfb27f53f451212868cc30247152ac70"
+        },
+        "lib/libm.so": {
+          "kind": "sdk24",
+          "path": "lib/libm.so",
+          "sha256": "0b8893c6470034862bc571bf940bb65b7c31cedddfe91ea6578dc7a50efeb4e8"
+        },
+        "lib/libm4u.so": {
+          "kind": "vendor",
+          "path": "libm4u.so",
+          "sha256": "2ef01c1046457d2bccfbea366cf387543a37253d767c24e8ad38a96dd63a1a86"
+        },
+        "lib/libmhalImageCodec.so": {
+          "kind": "vendor",
+          "path": "libmhalImageCodec.so",
+          "sha256": "bc10bca5b5f3fc946cb434a64f62b06aa9d365ae49f34e60f861d8c471d9651a"
+        },
+        "lib/libmp4enc_sa.ca7.so": {
+          "kind": "vendor",
+          "path": "libmp4enc_sa.ca7.so",
+          "sha256": "4d3e60b77b1066d96641e4eab815555cdb6fe0898b9da01eacd34a606bb3236a"
+        },
+        "lib/libmtk_drvb.so": {
+          "kind": "vendor",
+          "path": "libmtk_drvb.so",
+          "sha256": "02363312b8f631a3b594fe749d6fc276ee03a37c26e76b17211de230af8f3058"
+        },
+        "lib/libnativewindow.so": {
+          "kind": "shims",
+          "path": "libnativewindow.so",
+          "sha256": "212fe8c6fb70dfbe0edc60b83c86945a401f0335fdd12c6d73b66c6a4b0c4f72"
+        },
+        "lib/libsync.so": {
+          "kind": "sdk24",
+          "path": "lib/libsync.so",
+          "sha256": "c2d593223a4548c01ba65bee6e1248121f3fc15788181a5acbb4562c80c81499"
+        },
+        "lib/libtz_uree.so": {
+          "kind": "vendor",
+          "path": "libtz_uree.so",
+          "sha256": "f740c321088c223bf53ae1c83f05e3b4db2f59902c3815c46fd6e80d746b6629"
+        },
+        "lib/libui-v28.so": {
+          "kind": "vendor",
+          "path": "libui-v28.so",
+          "sha256": "7f12f5e82d35ee2a3b64c791fabe574ee9b9364c6902ea49fd6063a22c5adfa8"
+        },
+        "lib/libui.so": {
+          "kind": "vndk28",
+          "path": "vndk-core/libui.so",
+          "sha256": "92b7a431b065e6fc34ed068802f709972a18d9eab532dc4406fce1969022e641"
+        },
+        "lib/libunwind.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libunwind.so",
+          "sha256": "368c10030c6dd29ac2cc445373362f988330aa56192739db72320b545e79f7bc"
+        },
+        "lib/libunwindstack.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libunwindstack.so",
+          "sha256": "87861c713ae6fcee92aa59c8ff8b5022e075a43a9fbc50533baf5f5164ca2a44"
+        },
+        "lib/libutils.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libutils.so",
+          "sha256": "aa897d4311500863882b4901837902baae3a5f837ae6f67ebb972afba339a4ca"
+        },
+        "lib/libutilscallstack.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libutilscallstack.so",
+          "sha256": "4f8b0500560a97da85884d0d5e5a8caf89d3c3121ccb66c08a9ff9e281bdf6e3"
+        },
+        "lib/libvc1dec_sa.ca7.so": {
+          "kind": "vendor",
+          "path": "libvc1dec_sa.ca7.so",
+          "sha256": "870aea38d97bc5b4763dae4bd37c4cd0e6bd689bcb5648ea28a36a600de3eba7"
+        },
+        "lib/libvcodec_oal.so": {
+          "kind": "vendor",
+          "path": "libvcodec_oal.so",
+          "sha256": "bd76ad061e9ce75358e575956133990b793a5f6631444b0c4713907e25f422bf"
+        },
+        "lib/libvcodec_utility.so": {
+          "kind": "vendor",
+          "path": "libvcodec_utility.so",
+          "sha256": "7f46d588d62a552ec00954d0ca23662390071150a6cef7c04f814ebfd6548313"
+        },
+        "lib/libvcodecdrv.so": {
+          "kind": "vendor",
+          "path": "libvcodecdrv.so",
+          "sha256": "6a9b8be27634d37a451a05cb359797289254d8250573973b8fc064f4ff07989e"
+        },
+        "lib/libvndksupport.so": {
+          "kind": "shims",
+          "path": "libvndksupport.so",
+          "sha256": "d415f8ae4ab630bfe6f809e72f14317a727156b8c607a1e9fe49515661294096"
+        },
+        "lib/libvp8enc_sa.ca7.so": {
+          "kind": "vendor",
+          "path": "libvp8enc_sa.ca7.so",
+          "sha256": "2c12dde3cbe12b039f06797b20b9e45b7f68c868ae1c4933f07cbb9d6f70b74c"
+        },
+        "lib/libz.so": {
+          "kind": "vndk28",
+          "path": "vndk-sp/libz.so",
+          "sha256": "93ee222988a1371d863fa631d7a70dcdab1f1d3432f0d28f0552ce12b78d8b8b"
+        }
+      }
+    }
+  }
+}
