@@ -30,7 +30,7 @@ def install_script(uid, gid):
             "if [ -d /out/root ] && [ ! -L /out/root ]; then "
             f"chown -hR {uid}:{gid} /out/root || exit 1; "
             "fi; exit \"$status\"' EXIT\n"
-            command)
+            + command)
 
 def digest(path):
     value=hashlib.sha256()
