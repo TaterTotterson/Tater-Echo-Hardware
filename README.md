@@ -7,10 +7,11 @@ Reusable hardware helpers and development tools for building Linux applications
 and custom firmware on supported Amazon Echo devices.
 
 This is the hardware toolkit behind [Tater Echo Firmware](https://github.com/TaterTotterson/Tater-Echo-Firmware):
-GPU composition, hardware H.264 encoding/decoding, camera-buffer and color-format
-adapters, audio diagnostics, and reproducible runtime preparation. Other firmware
-projects can use the sources and documented interfaces without running the Tater
-app or Home Assistant bridge, subject to the applicable licenses.
+hardware-accelerated graphics and H.264 video, camera integration tools, and
+microphone diagnostics. It also includes tools to build the helpers and prepare
+the libraries they need. Other firmware projects can use these sources without
+running the Tater app or Home Assistant bridge, subject to the applicable
+licenses.
 
 **Looking to install Tater on an Echo?** Use the
 [firmware downloads and installation guide](https://github.com/TaterTotterson/Tater-Echo-Firmware#readme).
@@ -19,15 +20,18 @@ driver package.
 
 ## What it provides
 
-- **GPU rendering helpers:** Off-screen GLES composition, panel rotation and
-  color swizzling, retained scenes, fades, animated text, glow/thinking effects,
-  and video composition. Your application still owns layout and presentation.
-- **Hardware video adapters:** Target-specific H.264 encoder/decoder helpers
-  with framed input/output, timestamps, bounded buffers, and guarded teardown.
-  These use the dedicated video blocks, not the GPU's shader cores.
-- **Camera integration building blocks:** Sensor/ISP interface documentation,
-  Bayer/color conversion, buffer-order findings, and camera-clock corrections.
-  The production capture service itself lives in the firmware repository.
+- **GPU graphics:** Draw and combine screen graphics, including fades, animated
+  text, glow/thinking effects, and video with on-screen controls. The helpers
+  also handle screen rotation and color order; your application chooses the
+  layout and content.
+- **Hardware video playback and encoding:** Use the device's built-in video
+  hardware to decode supported H.264 streams for playback and compress prepared
+  camera frames for sending. Separate helpers manage frame timing, buffers,
+  and safe shutdown for each device.
+- **Camera integration tools:** Documentation and code for communicating with
+  the camera hardware, converting raw sensor images into usable colors, and
+  keeping frames in the right order. The complete camera capture service lives
+  in the firmware repository.
 - **Audio development tools:** Read-only ALSA/mixer diagnostics and original
   Biscuit ADC gain/high-pass-filter experiments. Production Biscuit/Radar
   gain/filter integration lives in the matching firmware/kernel sources.
@@ -131,27 +135,49 @@ for the complete workflow.
   [`scripts/assemble_mt8163_lineage_runtime.py`](scripts/assemble_mt8163_lineage_runtime.py),
   and the Athena runtime/build tools under [`scripts/`](scripts/).
 
-## Runtime requirements and limits
+## Required libraries and hardware acceleration
 
-**The open helpers are included; proprietary vendor runtimes are not.**
-MT8163 GPU/video paths still use compatible retained MediaTek/Arm libraries.
-Athena uses Panfrost/Mesa for GPU rendering, but its separate codec adapters
-still require compatible device-local codec libraries and kernel modules.
-Some preparation also uses pinned public Android bootstrap/VNDK inputs.
+**This repository includes our open helpers, but not proprietary vendor
+libraries.** These libraries provide access to some of the device's hardware;
+the helpers need compatible versions to work. Together, these required
+libraries are referred to as the hardware *runtime*.
+
+The MT8163 devices use compatible MediaTek/Arm libraries for graphics and video.
+Athena uses the open Panfrost/Mesa graphics stack, while its video helpers still
+need compatible device-local codec libraries and kernel drivers. Runtime
+preparation also uses specific, verified public Android libraries.
 
 Echo 5's factory installer assembles the required runtime locally from verified
 public inputs and the unit's retained vendor libraries. A normal user does not
 need our development files, an old FireOS backup, or a separately prepared
-runtime. A third-party project must implement or reuse that provisioning flow;
+runtime. Other firmware projects must reuse or implement that setup process;
 cloning this repository alone does not provide those libraries.
 
-- GPU composition is not hardware video decoding. The codec blocks are separate.
-- This is not an all-GPU or zero-copy camera pipeline: capture, Bayer/color
-  preparation, JPEG, scaling, and frame copies may still involve the CPU.
-- Codec/profile/size limits differ by target. Athena's current decoder is a
-  restricted live Baseline H.264 path, not a universal movie decoder.
-- MT8163 uses an off-screen Mali helper plus application-owned presentation;
-  it is not a complete upstream Panfrost/DRM port.
+### Which hardware does what?
+
+The device has different hardware for different jobs:
+
+- **GPU:** Draws and combines screen graphics, animations, and video overlays.
+- **Video decoder:** Turns a supported compressed H.264 stream into pictures
+  that can be displayed.
+- **Video encoder:** Compresses prepared camera frames into H.264 for sending
+  to another device.
+
+These are all forms of hardware acceleration. Video uses dedicated video
+hardware rather than the GPU itself; that does **not** mean it is decoded by
+the CPU.
+
+### What still depends on the device or CPU?
+
+- Hardware acceleration does not remove every CPU task. Preparing camera
+  images, JPEG processing, resizing, and copying frames can still use the CPU.
+- Not every video format or resolution is supported by the hardware helpers.
+  For example, Athena's current decoder supports a specific live H.264 format
+  called Baseline; it is not designed to decode every movie file. The firmware
+  retains software/JPEG fallback paths when hardware support is unavailable.
+- On MT8163 devices, the GPU prepares graphics in memory and the application
+  presents the finished image on the screen. This is not a complete replacement
+  for the device's graphics drivers.
 - This toolkit does not unlock an Echo, bypass its bootloader, replace its whole
   operating system, or offload wake inference/AEC to an undocumented DSP.
 
