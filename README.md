@@ -1,5 +1,8 @@
 # Tater Echo Hardware
 
+[**Echo Linux / kernels**](https://github.com/TaterTotterson/Tater-Echo-Linux)
+· [**Echo satellite firmware**](https://github.com/TaterTotterson/Tater-Echo-Firmware)
+
 Reusable hardware helpers and development tools for building Linux applications
 and custom firmware on supported Amazon Echo devices.
 
