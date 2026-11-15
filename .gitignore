@@ -16,4 +16,11 @@ captures/
 
 # Locally compiled hardware probes.
 probes/*/build/
+probes/*/kernel-diagnostics/.*.cmd
+probes/*/kernel-diagnostics/.tmp_versions/
+probes/*/kernel-diagnostics/*.ko
+probes/*/kernel-diagnostics/*.mod.c
+probes/*/kernel-diagnostics/*.o
+probes/*/kernel-diagnostics/Module.symvers
+probes/*/kernel-diagnostics/modules.order
 

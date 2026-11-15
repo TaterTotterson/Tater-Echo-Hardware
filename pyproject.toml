@@ -3,9 +3,9 @@ requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tater-hardware-research"
+name = "tater-echo-hardware"
 version = "0.2.0"
-description = "Local-first firmware and hardware research workbench for Tater Echo targets"
+description = "Hardware helpers, diagnostics and local-first research for Tater Echo satellites"
 readme = "README.md"
 requires-python = ">=3.9"
 license = "AGPL-3.0-only"

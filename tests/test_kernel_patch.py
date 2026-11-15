@@ -3,6 +3,17 @@ from pathlib import Path
 
 
 class CheckersKernelPatchTests(unittest.TestCase):
+    def test_experimental_patch_is_prominently_rejected(self) -> None:
+        readme = (
+            Path(__file__).resolve().parents[1]
+            / "kernel-patches"
+            / "checkers"
+            / "README.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("Rejected by live hardware testing", readme)
+        self.assertIn("no Tater firmware should consume it", readme)
+
     def test_decoder_patch_carries_complete_resource_set(self) -> None:
         patch = (
             Path(__file__).resolve().parents[1]

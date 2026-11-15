@@ -1,4 +1,4 @@
-# Tater Hardware Research rules
+# Tater Echo Hardware rules
 
 - Never commit or publish Amazon, MediaTek, Arm, or other proprietary firmware,
   binaries, calibration data, device backups, keys, or serial-numbered data.

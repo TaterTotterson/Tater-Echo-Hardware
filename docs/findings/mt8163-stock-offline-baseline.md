@@ -47,8 +47,10 @@ targeted Ghidra analysis:
   composer, framebuffer, and MediaTek display-manager paths.
 - MediaTek hardware video decode and encode through OMX, VDEC/VENC,
   `libvcodecdrv`, ION/M4U, and display-processing libraries.
-- Hardware JPEG decode/encode through the MediaTek JPEG driver and M4U/ION
-  buffer handling.
+- A stock hardware-JPEG userspace stack and MediaTek JPEG/M4U/ION interfaces.
+  The later connected trial proved the encoder block but rejected the inferred
+  standalone decoder at `0x17004000`; offline library presence alone was not
+  physical decoder proof.
 - Audio input/output, PCM and TDM capture, mixer control, speech enhancement,
   WebRTC audio preprocessing, and the Amazon/MediaTek SPI audio platform.
 

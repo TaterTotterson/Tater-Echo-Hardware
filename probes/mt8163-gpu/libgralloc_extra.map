@@ -1,0 +1,7 @@
+{
+    global:
+        gralloc_extra_perform;
+        gralloc_extra_query;
+        gralloc_extra_sf_set_status;
+    local: *;
+};

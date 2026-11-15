@@ -1,0 +1,4 @@
+{
+    global: ged_log_connect; ged_log_disconnect; ged_log_tpt_print;
+    local: *;
+};

@@ -1,0 +1,9 @@
+LIBC_O {
+    global:
+        __android_log_is_debuggable;
+        __system_property_read_callback;
+        __system_property_wait;
+        strtod_l;
+        strtof_l;
+    local: *;
+};

@@ -1,0 +1,12 @@
+{
+    global:
+        GpuAuxCreateContext;
+        GpuAuxDestoryContext;
+        GpuAuxDoConversionIfNeed;
+        GpuAuxGetCurrentAuxBuffer;
+        GpuAuxGetCurrentIdx;
+        GpuAuxIsSupportFormat;
+        GpuAuxIsUIPQFormat;
+        GpuAuxPrepareBuffer;
+    local: *;
+};

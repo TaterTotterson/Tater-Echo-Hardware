@@ -4,6 +4,14 @@ This directory contains a clean, reviewable experiment against the public
 Checkers kernel commit `8d928c5176cc`. It is not a production or flash-ready
 kernel change.
 
+> **Rejected by live hardware testing.** The candidate kernel booted, but a
+> real baseline-JPEG decode at the inferred `0x17004000` decoder window timed
+> out without an interrupt or output change. The window remained zero while
+> the known encoder window showed coherent live state. Keep the patch only as
+> an auditable negative result; no Tater firmware should consume it. Full live
+> evidence is in
+> [`docs/findings/checkers-live-media-bringup.md`](../../docs/findings/checkers-live-media-bringup.md).
+
 ## Current validation
 
 - The three affected files match their exact public-source SHA-256 values.
@@ -22,9 +30,10 @@ kernel change.
 - The live MT7668 Bluetooth module matches all 96 imported symbol CRCs and the
   live Wi-Fi module matches all 203 imported symbol CRCs against the rebuilt
   `Module.symvers`.
-- A donor-derived Android boot image was assembled offline with the exact live
-  Tater Recovery ramdisk. It is 13,498,368 bytes, fits the 16 MiB boot
-  partition with 3,278,848 bytes spare, and has not been flashed.
+- A donor-derived Android boot image was assembled with the exact live Tater
+  Recovery ramdisk. It is 13,498,368 bytes and fits the 16 MiB boot partition
+  with 3,278,848 bytes spare. It was subsequently trialed through the reviewed
+  `boot` path and is not a release candidate.
 
 The earlier GCC 12 object-only check remains useful as a quick structural
 test, but it is no longer the highest validation gate. Full evidence, input and
@@ -46,29 +55,28 @@ is compiled.
 - matching the decoder IRQ request to the device tree's active-low level type.
 
 The register window is named by the public decoder driver. The clock/interrupt
-assignment is a bounded but still unverified hardware inference: CKE0 and CKE1
+assignment was a bounded hardware inference: CKE0 and CKE1
 serve LARB3, CKE2 is the existing JPEG encoder gate, CKE3 is the remaining JPEG
 decoder gate, and SPI 209 immediately follows the existing encoder SPI 208 in
-the MediaTek layout. Compile success cannot prove those assignments. The first
-boot must therefore stop at resource discovery and kernel-log inspection before
-any decoder ioctl is permitted.
+the MediaTek layout. Compile success did not prove those assignments. The later
+live trial showed that the inference was wrong for this device.
 
-Before this can be used beyond offline validation, it must pass all of these
-gates:
+The experiment completed these historical validation gates:
 
 1. apply cleanly to the exact public commit (complete);
 2. compile the complete kernel with the live configuration and pinned
    toolchain (complete);
 3. preserve the kernel release and vendor-module ABI (complete);
 4. produce a donor-derived boot image that preserves Tater Recovery
-   (complete, offline only);
+   (complete);
 5. prove that the retained TWRP fallback still boots before writing `boot`
    (complete: TWRP 3.7.0_9-0 with root ADB);
-6. boot as a trial on the owner-operated Checkers and confirm the new decoder
-   resources without issuing CONFIG/START; and
-7. run the guarded INIT/DEINIT probe only after a fresh explicit approval.
+6. boot as a trial on the owner-operated Checkers and inspect the new decoder
+   resources before CONFIG/START (complete); and
+7. run the guarded INIT/DEINIT and real-input probes after explicit approval
+   (complete; the live hardware result rejected the patch).
 
-No current Tater release should consume this patch automatically.
+No current or future Tater release should consume this patch automatically.
 
 For an exact unmodified source tree, validate provenance and patch context with:
 

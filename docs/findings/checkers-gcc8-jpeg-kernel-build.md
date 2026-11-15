@@ -2,6 +2,14 @@
 
 Date: 2026-11-10
 
+> **Superseded by live testing:** the candidate described here was later
+> flashed through the reviewed `boot` path and tested on the owner-operated
+> Checkers. The kernel and recovery path worked, but the inferred JPEG decoder
+> at `0x17004000` did not. The patch is rejected and must not be used by a
+> release. See
+> [Checkers live media bring-up](checkers-live-media-bringup.md) for the live
+> evidence and the successful stock VDEC path.
+
 This record advances the MT8163 JPEG decoder experiment from an object-only
 structural check to a complete Checkers kernel and an offline boot-image
 candidate. Nothing in this work was flashed. The connected owner-operated
@@ -168,11 +176,11 @@ verified TWRP fallback through the native boot chain. From there, the saved
 rollback image can be flashed back to the bootloader's named `boot` target.
 Neither physical `recovery` nor `swdl` should be modified for this trial.
 
-## Remaining hardware gates
+## Historical gates and final disposition
 
-1. Preserve the current boot image and its hashes outside the trial path.
-2. Write the candidate only through the reviewed Checkers factory/recovery
-   path, never from an unverified normal boot.
-3. On the first boot, inspect only decoder resource discovery and kernel logs.
-4. Run the guarded INIT/DEINIT probe only after the resource evidence passes
-   and a fresh active-ioctl approval is given.
+The recovery, candidate-write, first-boot, INIT/DEINIT, private-buffer, and
+real-input gates were subsequently completed. The candidate booted and was
+recoverable, but a real baseline-JPEG decode timed out without an interrupt or
+destination-buffer change. Read-only register diagnostics showed coherent
+encoder state while the inferred decoder window remained zero. That live
+result rejects the resource inference despite the successful compile and boot.

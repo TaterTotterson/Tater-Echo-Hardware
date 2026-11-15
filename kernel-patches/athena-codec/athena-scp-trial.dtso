@@ -1,0 +1,32 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/* Research trial only: reserve the exact reviewed MT8183 ELF DRAM window.
+ * Module probe/start are separately gated. Requires recovery qualification.
+ * No Chromebook pinctrl, EC devices or protected VPU carveouts are imported.
+ */
+/dts-v1/;
+/plugin/;
+
+/ {
+	fragment@0 {
+		target-path = "/reserved-memory";
+		__overlay__ {
+			#address-cells = <2>;
+			#size-cells = <2>;
+			tater_scp_trial_pool: scp-codec-pool@50000000 {
+				compatible = "shared-dma-pool";
+				/* Coherent allocator rounds the 5MiB request to 8MiB. */
+				reg = <0 0x50000000 0 0x800000>;
+				no-map;
+			};
+		};
+	};
+
+	fragment@1 {
+		target-path = "/soc/scp@10500000";
+		__overlay__ {
+			memory-region = <&tater_scp_trial_pool>;
+			firmware-name = "tater-athena-scp.img";
+			status = "okay";
+		};
+	};
+};
