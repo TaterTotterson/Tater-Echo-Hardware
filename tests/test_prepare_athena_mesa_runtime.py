@@ -16,6 +16,7 @@ class MesaOwnershipTests(unittest.TestCase):
         self.assertIn('--no-scripts', script)
         self.assertNotIn('--allow-untrusted', script)
         self.assertNotIn('chown -hR 123:456 /out;', script)
+        self.assertNotIn('chown', mesa.install_script(None, None))
         for value in (-1, 2**32, '0; false', True):
             with self.assertRaises(ValueError):
                 mesa.install_script(value, 0)
