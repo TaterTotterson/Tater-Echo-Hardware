@@ -1,182 +1,168 @@
 # Tater Echo Hardware
 
-Tater Echo Hardware contains the original GPU, video and camera helpers,
-hardware diagnostics, reproducible build tooling, and research used to bring
-Tater Echo satellites up on Linux. The research workbench remains local-first:
-private firmware and device data are never publication inputs.
+Reusable hardware helpers and development tools for building Linux applications
+and custom firmware on supported Amazon Echo devices.
 
-## Repository roles
+This is the hardware toolkit behind [Tater Echo Firmware](https://github.com/TaterTotterson/Tater-Echo-Firmware):
+GPU composition, hardware H.264 encoding/decoding, camera-buffer and color-format
+adapters, audio diagnostics, and reproducible runtime preparation. Other firmware
+projects can use the sources and documented interfaces without running the Tater
+app or Home Assistant bridge, subject to the applicable licenses.
 
-- [Tater Echo Hardware](https://github.com/TaterTotterson/Tater-Echo-Hardware):
-  hardware helpers, diagnostics, interface findings and source-locked builds.
-- [Tater Echo Linux](https://github.com/TaterTotterson/Tater-Echo-Linux):
-  board platforms, kernels, boot images, root filesystems and recovery.
-- [Tater Echo Firmware](https://github.com/TaterTotterson/Tater-Echo-Firmware):
-  the satellite application, UI, factory installer and release packaging.
+**Looking to install Tater on an Echo?** Use the
+[firmware downloads and installation guide](https://github.com/TaterTotterson/Tater-Echo-Firmware#readme).
+This repository is for developers; it is not an installer or a universal Echo
+driver package.
 
-Publishing this source does not qualify a firmware release. Board-specific
-kernel/runtime provisioning, factory installation, OTA and rollback checks
-remain separate release gates. Do not flash diagnostic or experimental outputs
-as production firmware.
+## What it provides
 
-The project does **not** attempt to regenerate or publish Amazon source code.
-It inventories firmware obtained from hardware we own, connects reproducible
-static analysis to runtime evidence, and records the interface contracts needed
-for clean Tater implementations.
+- **GPU rendering helpers:** Off-screen GLES composition, panel rotation and
+  color swizzling, retained scenes, fades, animated text, glow/thinking effects,
+  and video composition. Your application still owns layout and presentation.
+- **Hardware video adapters:** Target-specific H.264 encoder/decoder helpers
+  with framed input/output, timestamps, bounded buffers, and guarded teardown.
+  These use the dedicated video blocks, not the GPU's shader cores.
+- **Camera integration building blocks:** Sensor/ISP interface documentation,
+  Bayer/color conversion, buffer-order findings, and camera-clock corrections.
+  The production capture service itself lives in the firmware repository.
+- **Audio development tools:** Read-only ALSA/mixer diagnostics and original
+  Biscuit ADC gain/high-pass-filter experiments. Production Biscuit/Radar
+  gain/filter integration lives in the matching firmware/kernel sources.
+- **Reproducible builds and runtime tools:** Source/toolchain/output locks,
+  compatibility shims, and local runtime assemblers that keep public helpers
+  separate from private vendor libraries.
+- **A research workbench:** Firmware inventories, image/ELF inspection, optional
+  Ghidra integration, and read-only device snapshots for extending support.
 
-## Safety and privacy
+## Devices and hardware paths
 
-- Firmware, device backups, calibration data, Ghidra projects, and runtime
-  captures stay in an ignored local workspace.
-- Nothing is uploaded to an AI or analysis service by this tool.
-- The device snapshot command is read-only. It does not flash, remount, write
-  registers, change mixer controls, or issue hardware-control ioctls.
-- Only original tools, hashes, evidence summaries, interface descriptions, and
-  clean implementations belong in Git.
+Support is specific to the exact target, kernel, runtime, and helper version.
+Similar-looking Echo models are not interchangeable.
 
-See [Research policy](docs/research-policy.md) before adding a new collector or
-device operation.
+| Target | Device | Hardware path covered |
+| --- | --- | --- |
+| `checkers` | Echo Show 5, 1st generation | MT8163 Mali GPU helper; retained-Lineage H.264 adapters |
+| `cronos` | Echo Show 5, 2nd generation | MT8163 Mali GPU helper; target-specific H.264/camera adapters |
+| `crown` | Echo Show 8, 1st generation | MT8163 Mali GPU helper; target-specific H.264/camera adapters |
+| `athena` | Echo Show 8, 2nd generation | MT8183 Panfrost/Mesa GPU helper; separate AP-controlled video adapters |
+| `rook` | Echo Spot, 1st generation | MT8163 round-display GPU helper; target-specific H.264/camera adapters |
+| `biscuit` | Echo Dot, 2nd generation | Audio diagnostics and ADC gain/filter reference work; no screen/video helper bundle |
+| `radar` | Echo, 2nd generation | Related production audio integration in the firmware/kernel repositories; not a Biscuit probe target |
 
-## Current milestone
+The screen-target helpers were integrated into Echo Firmware 5.0.0. That release
+also includes the Biscuit/Radar audio changes. See its
+[validation coverage](https://github.com/TaterTotterson/Tater-Echo-Firmware/blob/main/docs/echo-5-release-review.md)
+for completed device tests and explicitly accepted gaps, including Radar's
+unperformed physical tests. Research checkpoints below are dated evidence, not
+a promise that every experimental probe or media format is production-ready.
 
-The offline workbench provides:
+## Using the toolkit in another project
 
-- recursive firmware-directory inventory without copying the input;
-- SHA-256 identity and magic-based image classification;
-- read-only GPT, Android boot image, ramdisk, kernel, appended-DTB, and ext4
-  inspection;
-- dependency, interpreter, build-ID, architecture, and SONAME extraction from
-  32- and 64-bit ELF files without external Python packages;
-- searchable JSON manifests, binary strings with exact offsets, capability
-  maps, and dependency reports;
-- a Ghidra headless adapter with batch analysis, repeatable JSONL export,
-  string cross-references, and targeted decompilation;
-- a conservative ADB device snapshot for Android, Fire OS, LineageOS, and
-  Tater Linux devices.
+This is a collection of small C/C++ helpers and Python build tools, **not one
+drop-in shared library or a stable, cross-device SDK**. Hardware helpers run as
+separate processes with bounded stdin/stdout protocols. This makes them usable
+from Go, C/C++, Python, or another application that implements the contract.
 
-The first owner-local MT8163 stock image has been mapped offline. The evidence
-and the exact boundary between confirmed facts and the next device tests are in
-[the MT8163 baseline](docs/findings/mt8163-stock-offline-baseline.md).
-The first connected, read-only confirmation is in the
-[Checkers v4.0.2 baseline](docs/findings/checkers-v4.0.2-read-only-baseline.md).
-The complete pinned-toolchain kernel build and vendor-module ABI check are in
-the
-[Checkers GCC 8.3 JPEG build](docs/findings/checkers-gcc8-jpeg-kernel-build.md).
-The recoverable live trial, rejected standalone-JPEG inference, verified VDEC
-lock, sustained multi-buffer 128x128 H.264 hardware decode, and complete
-Mali-T720 off-screen render/readback are in
-the [Checkers live media bring-up](docs/findings/checkers-live-media-bringup.md).
-The complete image build, A/B health-gated commit, post-commit strict hardware
-video/audio test, and full-device smoke are recorded in the
-[Checkers ground-up firmware trial](docs/findings/checkers-ground-up-firmware-trial.md).
-The distinction between live independent access and a fully redistributable
-open stack is tracked in the
-[Checkers hardware-access matrix](docs/hardware-access-matrix.md).
-The difference between generic upstream Mali-T720 support and a real MT8163
-port is captured in the
-[Checkers upstream Linux gap](docs/findings/checkers-upstream-gap.md).
-The separate
-[MT8163 decoder source audit](docs/findings/mt8163-vdec-source-availability.md)
-shows that the public Android hardware tree provides an OMX loader and ABI
-headers, but not the decoder component that loader opens.
+1. **Select the exact target and kernel.** Start with the matching board sources
+   in [Tater Echo Linux](https://github.com/TaterTotterson/Tater-Echo-Linux), not
+   an arbitrary Android/Linux image.
+2. **Pin a matching helper set.** The firmware repository's
+   [`platforms/`](https://github.com/TaterTotterson/Tater-Echo-Firmware/tree/main/platforms)
+   directory holds the consuming source, toolchain, runtime, and output locks.
+   Its [`tools/hardware_bundle.py`](https://github.com/TaterTotterson/Tater-Echo-Firmware/blob/main/tools/hardware_bundle.py)
+   builds/verifies the GPU/MT8163 bundles; Athena codecs use the separate
+   [`tools/athena_codec_bundle.py`](https://github.com/TaterTotterson/Tater-Echo-Firmware/blob/main/tools/athena_codec_bundle.py)
+   contract. Do not mix helpers from different targets or profiles.
+3. **Supply the required local runtime.** Follow the device-specific preparation
+   recipe below. Keep proprietary libraries private and check their exact
+   identities before enabling hardware access.
+4. **Implement the process protocol.** Use the helper sources and the firmware's
+   [`internal/hardwarebundle`](https://github.com/TaterTotterson/Tater-Echo-Firmware/tree/main/device/internal/hardwarebundle)
+   and [`internal/videostream`](https://github.com/TaterTotterson/Tater-Echo-Firmware/tree/main/device/internal/videostream)
+   integrations as references. Keep a single display owner, preserve timestamps
+   and buffer lifetimes, and handle helper failure explicitly.
+5. **Qualify your integration.** Test generated colors and frame order, real
+   voice/video, camera and microphone privacy, cancellation, and recovery on
+   the actual model. Passing a host test or copying a lock does not qualify a
+   new firmware build.
 
-Athena's separate MT8183/Panfrost work is recorded in
-[the GPU/UI bring-up](docs/findings/athena-panfrost-ui-bringup.md).
-[The codec prerequisite audit](docs/findings/athena-codec-prerequisites.md)
-distinguishes its working GPU UI from the still-unqualified SCP video path,
-including read-only checks and an offline full-kernel/module build.
-
-Rook's native round GPU UI, target-specific hardware codecs, completed camera
-buffers and recoverable camera-clock correction are recorded in the
-[Rook GPU/codec checkpoint](docs/findings/rook-gpu-codec-bringup.md). It separates
-the measured 15 FPS installed capture from remaining final release gates.
-
-## Guarded hardware probes
-
-The GPU and H.264 adapters are also buildable production helper sources, not
-documentation-only probes. `scripts/build_tater_hardware.py` consumes the
-firmware repository's `platforms/checkers-hardware-lock.json`, builds in a fresh
-temporary tree, and requires byte-identical hardware-qualified outputs. The
-firmware's `tools/hardware_bundle.py` verifies the research source pin before
-running that recipe. Only the three open helpers and public metadata belong in
-the resulting public archive.
-
-`scripts/prepare_tater_hardware_runtime.py` separately verifies and prepares the
-owner's private library trees for the factory's `provision_hardware.py` tool.
-That output stays private/ignored; it excludes helpers and is never a firmware
-release input. New firmware carries its helpers with the owning system/app
-slot, while private libraries remain unchanged. See the firmware repository's
-`docs/checkers-hardware-build.md` for the complete workflow and remaining
-publication, kernel migration and installed-hardware qualification gates.
-
-The [owner-runtime supply-chain audit](docs/findings/owner-runtime-supply-chain.md)
-records the remaining general-user installer gaps. It includes a hash-locked
-offline assembler for retained MT8163 Lineage libraries and a **separate,
-unqualified Checkers Lineage codec candidate**. Neither tool installs firmware
-or replaces the published hardware-qualified helper bundles.
-
-The first clean-room probe records the confirmed MT8163 JPEG control ABI. Its
-default mode is host-safe and does not open a device:
+For example, from a matching **firmware** checkout, build and verify the public
+Checkers helpers using the sources in this repository:
 
 ```sh
-make -C probes/mt8163-jpeg
-probes/mt8163-jpeg/build/mt8163-jpeg-probe --describe
+python3 tools/hardware_bundle.py build --target checkers \
+  --source /path/to/Tater-Echo-Hardware \
+  --ndk /path/to/android-ndk-r21e \
+  --headers /path/to/pinned-public-header-checkouts \
+  --link-libraries /path/to/Tater-Echo-Hardware \
+  --output /path/to/new-public-helper-directory
+python3 tools/hardware_bundle.py verify --target checkers \
+  /path/to/new-public-helper-directory
 ```
 
-The probe's inspect and INIT/DEINIT modes are target-gated. Active mode also
-requires an explicit hardware-ioctl acknowledgement and must not be run without
-a separate device review and operator approval. See
-[the probe README](probes/mt8163-jpeg/README.md).
+This example selects the retained-Lineage Checkers profile, which needs no
+private link libraries; the required `--link-libraries` directory is unused by
+that profile. Other profiles have their own locked requirements. The header
+checkout names/revisions and NDK must match the consuming lock. The builder
+refuses changed inputs or nonmatching outputs; it does not download or install
+firmware. See the
+[build/runtime guide](https://github.com/TaterTotterson/Tater-Echo-Firmware/blob/main/docs/checkers-hardware-build.md)
+and the [existing public build inputs](https://github.com/TaterTotterson/Tater-Echo-Hardware/releases)
+for the complete workflow.
 
-The experimental JPEG-decoder candidate proved that the inferred standalone
-block is not present at `0x17004000` on this device. That patch is retained only
-as a documented negative result. The separate `mt8163-vcodec` probes now
-validate the real hardware video-decoder path, including a complete off-screen
-H.264 decode and ten-picture synthetic buffer-turnover test. See
-[the Vcodec probe README](probes/mt8163-vcodec/README.md).
-The `mt8163-gpu` probe independently completes a private EGL pbuffer render and
-pixel readback without opening the display. Its bounded stream helper now also
-verifies every pixel in a full Checkers rotation/swizzle and drives Tater's
-large-frame hybrid GPU compositor while Go retains sole framebuffer ownership.
-See
-[the Mali probe README](probes/mt8163-gpu/README.md).
-The Vcodec work also proves the complete block-YUV layout and includes a clean,
-host-tested RGBA8888 converter for Tater's transient renderer. Its first
-reusable `tater-vdec` adapter now decodes bounded normal H.264 batches to
-YUV420P or RGBA8888, has exact reference matches through 1080p, and completes
-repeatable 180-picture framed RGBA streams beyond the original bounded batch.
-An explicitly gated Tater integration now carries HTTP H.264 through the
-unprivileged pinned FFmpeg process into `tater-vdec`, matches the exact known
-30-picture hardware hash, and falls back before first presentation without
-duplicating PCM when SPS geometry does not match. It now also preserves source
-packet PTS through a copy-only metadata side channel, synchronizes against PCM
-periods consumed by the real ALSA path, completes a 1,200-picture soak, and
-holds the final displayed frame through the speaker's queued PCM tail.
-The stock component and its Android compatibility runtime remain owner-local
-and are not part of this repository. The production handoff is documented in
-the [Tater VDEC integration plan](docs/tater-vdec-integration.md). The
-`mt8163-display` probe maps the framebuffer and display-session
-capabilities without changing display state. It also identified a bounded
-32-bit suspend-query fix under `kernel-patches/mt8163-display`; that fix now
-passes a [complete pinned-toolchain kernel build](docs/findings/checkers-display-compat-kernel-build.md)
-without the rejected JPEG experiment.
-The `mt8163-camera` inventory identifies the exact Checkers sensor and private
-ISP ABI from public kernel source without powering the camera or capturing an
-image. Its target-side ABI check now verifies the exact ARM32 sensor, ISP,
-pipe-manager, and SYSRAM layouts without opening those devices. See
-[the camera inventory README](probes/mt8163-camera/README.md) and the
-[camera ABI boundary](docs/findings/checkers-camera-abi.md).
+### Where to start in the source
 
-Ghidra is optional until static analysis is requested. `debugfs` from
-e2fsprogs is needed for ext4 images, and `dtc` is needed to render appended
-device trees as source. ADB is optional until a physical device snapshot is
-requested. On macOS, the optional image tools can be installed with:
+- [GPU helpers and protocols](probes/mt8163-gpu/README.md): common renderer source
+  with target-specific paths, including Athena's Mesa adapter.
+- [MT8163 video adapters](probes/mt8163-vcodec/README.md) and
+  [Checkers retained-Lineage clients](probes/checkers-lineage-codec/): H.264
+  interfaces, pixel layouts, and bounded buffer handling.
+- [Athena AP codec adapters](probes/mt8183-codec/README.md): separate MT8183
+  encoder/decoder interfaces and safety restrictions.
+- [Camera interfaces](probes/mt8163-camera/README.md),
+  [Cronos completed-buffer findings](docs/findings/cronos-completed-camera-buffers.md),
+  and [Rook bring-up](docs/findings/rook-gpu-codec-bringup.md).
+- [Audio tools](probes/mt8163-audio/README.md) and
+  [Biscuit filter findings](docs/findings/biscuit-adc3101-hpf-trial.md).
+- [Runtime input provenance](docs/findings/owner-runtime-supply-chain.md),
+  [`scripts/assemble_mt8163_lineage_runtime.py`](scripts/assemble_mt8163_lineage_runtime.py),
+  and the Athena runtime/build tools under [`scripts/`](scripts/).
 
-```sh
-brew install e2fsprogs dtc
-```
+## Runtime requirements and limits
 
-## Set up
+**The open helpers are included; proprietary vendor runtimes are not.**
+MT8163 GPU/video paths still use compatible retained MediaTek/Arm libraries.
+Athena uses Panfrost/Mesa for GPU rendering, but its separate codec adapters
+still require compatible device-local codec libraries and kernel modules.
+Some preparation also uses pinned public Android bootstrap/VNDK inputs.
+
+Echo 5's factory installer assembles the required runtime locally from verified
+public inputs and the unit's retained vendor libraries. A normal user does not
+need our development files, an old FireOS backup, or a separately prepared
+runtime. A third-party project must implement or reuse that provisioning flow;
+cloning this repository alone does not provide those libraries.
+
+- GPU composition is not hardware video decoding. The codec blocks are separate.
+- This is not an all-GPU or zero-copy camera pipeline: capture, Bayer/color
+  preparation, JPEG, scaling, and frame copies may still involve the CPU.
+- Codec/profile/size limits differ by target. Athena's current decoder is a
+  restricted live Baseline H.264 path, not a universal movie decoder.
+- MT8163 uses an off-screen Mali helper plus application-owned presentation;
+  it is not a complete upstream Panfrost/DRM port.
+- This toolkit does not unlock an Echo, bypass its bootloader, replace its whole
+  operating system, or offload wake inference/AEC to an undocumented DSP.
+
+## Related repositories
+
+- **This repository:** Reusable hardware helpers, diagnostics, compatibility
+  tooling, interface documentation, and research evidence.
+- [**Tater Echo Linux**](https://github.com/TaterTotterson/Tater-Echo-Linux):
+  Board platforms, kernel sources/builds, boot, root filesystems, and recovery.
+- [**Tater Echo Firmware**](https://github.com/TaterTotterson/Tater-Echo-Firmware):
+  Satellite applications, UI, production camera/audio integration, installers,
+  and release/OTA packaging. This is the working integration reference.
+
+## Host development and tests
 
 ```sh
 git clone https://github.com/TaterTotterson/Tater-Echo-Hardware.git
@@ -184,112 +170,65 @@ cd Tater-Echo-Hardware
 PYTHONPATH=src python3 -m unittest discover -s tests -v
 ```
 
-The repository includes `bin/tater-re`, so no package installation is required.
-An editable Python install remains optional for development environments with a
-current pip.
+The Python workbench requires Python 3.9+ and has no external Python runtime
+dependencies. Hardware builds additionally need the target's pinned compilers,
+headers, and, for some recipes, Docker. `bin/tater-re` runs directly from the
+checkout; a Python install does not build the hardware helpers.
 
-## License
+<details>
+<summary>Optional firmware research workbench</summary>
 
-Unless a file has a separate license notice, Tater's original code and
-documentation are licensed under [AGPL-3.0-only](LICENSE). Existing MIT-licensed
-helpers and GPL-2.0-only kernel modules/patches retain their respective terms;
-see [the license notices](NOTICE.md). No license here grants permission to
-redistribute proprietary runtime libraries, firmware or device data.
-
-The original `scripts/repack_legacy_boot.py` helper can verify an Android
-boot-v0 donor and assemble an ignored local candidate with a replacement
-kernel while preserving and validating every other payload. It refuses to
-overwrite existing output and is intended only for the reviewed recovery
-workflow documented in the Checkers build records.
-
-Initialize an ignored local workspace:
+Inputs stay local. Start an ignored workspace, then inventory an extracted
+firmware tree or inspect an image without changing the input:
 
 ```sh
 ./bin/tater-re --workspace .tater-re init
-```
-
-## Inventory firmware
-
-Point `ingest` at an extracted firmware directory, an Android vendor tree, a
-boot image, or an individual library. Inputs are referenced in place and are
-not copied into the repository.
-
-```sh
 ./bin/tater-re --workspace .tater-re ingest /path/to/extracted/vendor
 ./bin/tater-re --workspace .tater-re inventory
 ./bin/tater-re --workspace .tater-re search libvcodec
-./bin/tater-re --workspace .tater-re search mtk_disp_mgr
-./bin/tater-re --workspace .tater-re strings SHA256_PREFIX /dev/mtk_disp_mgr
-```
-
-Every artifact is addressed by its SHA-256. A unique prefix is accepted by
-commands that take an artifact ID.
-
-## Inspect firmware images
-
-Image commands are read-only with respect to their input. Extracted files go
-under the ignored workspace unless `--output` is supplied. Files with common
-key, credential, and keystore names are excluded from ext4 extraction and
-directory ingestion.
-
-```sh
-./bin/tater-re --workspace .tater-re image inspect /path/to/gpt.img
 ./bin/tater-re --workspace .tater-re image inspect /path/to/boot.img
-./bin/tater-re --workspace .tater-re image boot-extract /path/to/boot.img
-./bin/tater-re --workspace .tater-re image list /path/to/system.img --root /lib
-./bin/tater-re --workspace .tater-re image extract /path/to/system.img \
-  '/lib/*.so' '/lib/hw/*' '/lib/egl/*'
-
 ./bin/tater-re --workspace .tater-re report capabilities --format markdown
-./bin/tater-re --workspace .tater-re report dependencies --format json
 ```
 
-## Ghidra analysis
-
-Install Ghidra separately, then point the workbench at its installation when it
-cannot be found automatically:
+The workbench includes SHA-256 inventory, GPT/boot/ext4 inspection, ELF
+dependencies, strings with exact offsets, and optional Ghidra batch/export
+support. Ghidra is installed separately; `debugfs` is needed for ext4 and `dtc`
+for device-tree source rendering. On macOS the optional image tools are:
 
 ```sh
-./bin/tater-re --workspace .tater-re ghidra status --ghidra-home /path/to/ghidra
-./bin/tater-re --workspace .tater-re ghidra analyze SHA256_PREFIX \
-  --ghidra-home /path/to/ghidra
-./bin/tater-re --workspace .tater-re ghidra batch jpeg --limit 10 \
-  --ghidra-home /path/to/ghidra
-./bin/tater-re --workspace .tater-re ghidra export SHA256_PREFIX \
-  --ghidra-home /path/to/ghidra
-./bin/tater-re --workspace .tater-re ghidra decompile SHA256_PREFIX FUNCTION_OR_ADDRESS \
-  --ghidra-home /path/to/ghidra
-./bin/tater-re --workspace .tater-re ghidra search vcodec
+brew install e2fsprogs dtc
 ```
 
-Analysis exports stay under `.tater-re/analysis`. Ghidra itself refuses project
-directories whose path contains a dot-prefixed element, so its ignored database
-is kept beside the workspace in `tater-re-ghidra-projects/`. The export is JSON
-Lines so an investigator or coding agent can query it without controlling the
-Ghidra user interface.
-
-## Read-only device snapshot
-
-With one test Echo attached over ADB:
+With an approved test device attached over ADB, the snapshot command is
+read-only and does not pull proprietary libraries or calibration contents:
 
 ```sh
 ./bin/tater-re --workspace .tater-re device snapshot
 ```
 
-Use `--serial SERIAL` when multiple devices are attached. The snapshot records
-platform identity, kernel and device-node inventories, ALSA state, loaded
-modules, Android media-service summaries when available, and selected device
-tree data. It intentionally does not pull proprietary libraries or calibration
-contents.
+Use `--serial SERIAL` when multiple devices are attached. See
+`./bin/tater-re --help`, the [roadmap](docs/roadmap.md),
+[hardware-access matrix](docs/hardware-access-matrix.md), and
+[dated findings](docs/findings/) for the full research trail. Earlier findings
+describe the state of their particular trial; current firmware release
+qualification is recorded separately in the firmware repository.
 
-## Next work
+</details>
 
-The staged plan is in [Roadmap](docs/roadmap.md). Hardware-decoded frame
-presentation and the operator-present, no-save camera-pattern proof are now
-complete. Standard ALSA microphone transport is also mapped without retaining
-audio. Tater's existing MIT-licensed MT8163 camera package is the clean camera
-adapter; V4L2 would improve portability but is not an access blocker. The main
-remaining media gaps are redistributable replacements for the owner-local VDEC
-and Mali userspace bridges, plus repeatable frontend-quality comparisons rather
-than more transport probes.
+## Safety and licensing
 
+Read the [research policy](docs/research-policy.md) before adding device
+operations. Hardware jobs, mixer writes, kernel experiments, and flashing are
+not read-only diagnostics: they require target-specific review, operator
+approval, and a recovery plan. Do not run an experimental probe on a different
+model by removing its guards.
+
+Keep vendor libraries/firmware, calibration, backups, keys, device identities,
+recordings, and Ghidra projects outside Git and public artifacts. Only original
+tools, clean implementations, hashes, and nonprivate evidence belong here.
+
+Unless a file says otherwise, original Tater code and documentation are
+[AGPL-3.0-only](LICENSE). MIT-marked helpers and GPL-2.0-only kernel work keep
+their own licenses; read [NOTICE.md](NOTICE.md) before reusing or distributing
+components. Neither these licenses nor a source release grants permission to
+redistribute proprietary vendor files.
